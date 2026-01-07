@@ -26,6 +26,10 @@ if (window.MITMWEB_STATIC) {
 
 useUrlState(store);
 
+// Initialize theme on startup
+const currentTheme = store.getState().ui.theme.current;
+document.body.classList.add(`theme-${currentTheme}`);
+
 window.addEventListener("error", (e: ErrorEvent) => {
     store.dispatch(addLog(`${e.message}\n${e.error.stack}`));
 });

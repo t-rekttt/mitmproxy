@@ -6,11 +6,12 @@
     flex-direction: column;
 
     > div {
-        background-color: #f2f2f2;
+        background-color: var(--bg-secondary);
         padding: 0 5px;
         flex: 0 0 auto;
-        border-top: 1px solid #aaa;
+        border-top: 1px solid var(--border-light);
         cursor: row-resize;
+        color: var(--text-primary);
     }
 
     > pre {
@@ -20,17 +21,19 @@
         border-radius: 0;
         overflow-x: auto;
         overflow-y: scroll;
-        background-color: #fcfcfc;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
     }
 
     .fa-close {
         cursor: pointer;
         float: right;
-        color: grey;
+        color: var(--text-secondary);
         padding: 3px 0;
         padding-left: 10px;
         &:hover {
-            color: black;
+            color: var(--text-primary);
         }
     }
 

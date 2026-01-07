@@ -79,6 +79,9 @@ export const testState: RootState = {
             [FilterName.Search]: "~u /second | ~tcp | ~dns | ~udp",
             [FilterName.Highlight]: "~u /path",
         },
+        theme: {
+            current: "light",
+        },
     },
     options: defaultOptions,
     flows: {

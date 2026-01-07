@@ -1,23 +1,26 @@
 .command-title {
-    background-color: #f2f2f2;
-    border: 1px solid #aaa;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
 }
 
 .command-result {
     display: block;
     margin: 0px;
-    background-color: #fcfcfc;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     height: 100px;
     max-height: 100px;
     overflow: auto;
 }
 
 .command-suggestion {
-    background-color: #9c9c9c;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .argument-suggestion {
-    background-color: hsla(209, 52%, 84%, 0.5) !important;
+    background-color: var(--popover-hover) !important;
 }
 
 .command > .popover {

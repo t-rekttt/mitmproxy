@@ -7,8 +7,8 @@
 
 header {
     padding-top: 6px;
-    background-color: white;
-    @separator-color: lighten(grey, 15%);
+    background-color: var(--bg-primary);
+    @separator-color: var(--border-separator);
     > div:not(:empty) {
         display: block;
         margin: 0;
@@ -78,7 +78,7 @@ header {
 }
 
 .menu-legend {
-    color: #777;
+    color: var(--text-secondary);
     height: @menu-legend-height;
     text-align: center;
     font-size: 12px;
@@ -89,7 +89,7 @@ header {
     @space: 10px;
     margin-left: -(@menu-group-hmargin + 1px);
     content: " ";
-    border-left: solid 1px lighten(grey, 40%);
+    border-left: solid 1px var(--border-color);
     margin-top: @space;
     height: @menu-height - @space*2;
     position: absolute;
@@ -115,7 +115,7 @@ header {
     left: 43px;
     display: block;
     max-width: none;
-    opacity: 0.9;
+    background-color: var(--popover-bg);
 
     @media (max-width: @screen-xs-max) {
         top: 16px;
@@ -130,7 +130,7 @@ header {
         tr {
             cursor: pointer;
             &:hover {
-                background-color: hsla(209, 52%, 84%, 0.5) !important;
+                background-color: var(--popover-hover) !important;
             }
         }
     }
@@ -158,5 +158,24 @@ header {
     &.offline {
         background-color: @label-warning-bg;
         opacity: 1;
+    }
+}
+
+.theme-toggle {
+    float: right;
+    margin: 3px 5px;
+    padding: 3px 8px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: var(--bg-tertiary);
+    }
+
+    i {
+        font-size: 16px;
     }
 }

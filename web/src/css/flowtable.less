@@ -18,8 +18,8 @@
     }
 
     thead tr {
-        background-color: #f2f2f2;
-        border-bottom: solid #bebebe 1px;
+        background-color: var(--table-header-bg);
+        border-bottom: solid var(--border-light) 1px;
         line-height: 23px;
     }
 
@@ -31,7 +31,7 @@
 
         &.sort-asc,
         &.sort-desc {
-            background-color: lighten(#f2f2f2, 3%);
+            background-color: var(--bg-secondary);
         }
 
         &.sort-asc:after,
@@ -41,7 +41,7 @@
             right: 3px;
             top: 3px;
             padding: 2px;
-            background-color: fadeout(lighten(#f2f2f2, 3%), 20%);
+            background-color: var(--bg-tertiary);
         }
 
         &.sort-asc:after {
@@ -57,30 +57,30 @@
         cursor: pointer;
 
         & {
-            background-color: hsl(0, 0%, 100%);
+            background-color: var(--table-row-odd);
             &:nth-child(even) {
-                background-color: hsl(0, 0%, 95%);
+                background-color: var(--table-row-even);
             }
         }
 
         &.highlighted {
-            background-color: hsl(48, 100%, 80%);
+            background-color: var(--highlight-color);
             &:nth-child(even) {
-                background-color: hsl(48, 100%, 75%);
+                background-color: var(--highlight-color-alt);
             }
         }
 
         &.selected {
-            background-color: hsl(209, 51%, 92%) !important;
+            background-color: var(--selected-color) !important;
             &:nth-child(even) {
-                background-color: hsl(209, 51%, 86%) !important;
+                background-color: var(--selected-color-alt) !important;
             }
         }
 
         &.selected.highlighted {
-            background-color: hsl(209, 96%, 74%) !important;
+            background-color: var(--selected-highlight) !important;
             &:nth-child(even) {
-                background-color: hsl(209, 96%, 68%) !important;
+                background-color: var(--selected-highlight-alt) !important;
             }
         }
     }
@@ -91,7 +91,7 @@
         text-overflow: ellipsis;
     }
 
-    @interceptorange: hsl(30, 100%, 50%);
+    @interceptorange: var(--intercept-color);
 
     tr.intercepted:not(.has-response) {
         .col-path,
@@ -117,7 +117,7 @@
     }
 
     .col-tls-https {
-        background-color: rgba(0, 185, 0, 0.5);
+        background-color: var(--tls-indicator);
     }
 
     .col-index {
@@ -139,7 +139,7 @@
         }
 
         .fa-repeat {
-            color: green;
+            color: var(--success-color);
         }
 
         .fa-pause {
@@ -148,7 +148,7 @@
 
         .fa-exclamation,
         .fa-times {
-            color: darkred;
+            color: var(--error-color);
         }
     }
 
@@ -217,7 +217,7 @@
             text-align: center;
 
             &:hover {
-                background-color: rgba(0, 0, 0, 5%);
+                background-color: var(--bg-hover);
             }
         }
     }

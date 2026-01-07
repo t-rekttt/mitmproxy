@@ -5,19 +5,22 @@
     flex-direction: column;
 
     nav {
-        background-color: #f2f2f2;
+        background-color: var(--bg-secondary);
     }
 
     section {
         overflow-y: scroll;
         flex: 1;
         padding: 5px 12px 10px;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
 
         > footer {
-            box-shadow: 0 0 3px gray;
+            box-shadow: 0 0 3px var(--border-light);
             padding: 2px;
             margin: 0;
             height: 23px;
+            background-color: var(--bg-primary);
         }
     }
 
@@ -25,13 +28,13 @@
         margin-top: 2px;
         padding-left: 10px;
         padding-right: 7px;
-        color: grey;
+        color: var(--text-secondary);
         font-size: 15px;
         border: none;
     }
 
     .close-button:hover {
-        color: black;
+        color: var(--text-primary);
     }
 
     .first-line {
