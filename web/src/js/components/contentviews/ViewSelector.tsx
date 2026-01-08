@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppSelector } from "../../ducks";
 import Dropdown, { MenuItem } from "../common/Dropdown";
+import { Files, ChevronDown } from "lucide-react";
 
 type ViewSelectorProps = {
     value: string;
@@ -13,18 +14,14 @@ export default function ViewSelector({ value, onChange }: ViewSelectorProps) {
     );
 
     const inner = (
-        <span>
-            <i className="fa fa-fw fa-files-o" />
-            &nbsp;<b>View:</b> {value.toLowerCase()} <span className="caret" />
+        <span className="inline-flex items-center gap-1">
+            <Files className="h-3 w-3" />
+            <b>View:</b> {value.toLowerCase()} <ChevronDown className="h-3 w-3" />
         </span>
     );
 
     return (
-        <Dropdown
-            text={inner}
-            className="btn btn-default btn-xs"
-            options={{ placement: "top-end" }}
-        >
+        <Dropdown text={inner} options={{ placement: "top-end" }}>
             {contentViews.map((name) => (
                 <MenuItem key={name} onClick={() => onChange(name)}>
                     {name.toLowerCase().replace("_", " ")}

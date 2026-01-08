@@ -13,10 +13,12 @@ import Comment from "./FlowView/Comment";
 import { selectTab } from "../ducks/ui/flow";
 import { useAppDispatch, useAppSelector } from "../ducks";
 import type { Flow } from "../flow";
-import classnames from "classnames";
 import TcpMessages from "./FlowView/TcpMessages";
 import UdpMessages from "./FlowView/UdpMessages";
 import * as flowsActions from "../ducks/flows";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 type TabProps = {
     flow: Flow;
@@ -87,30 +89,42 @@ export default function FlowView() {
     const Tab = allTabs[active];
 
     return (
-        <div className="flow-detail">
-            <nav className="nav-tabs nav-tabs-sm">
-                <button
-                    data-testid="close-button-id"
-                    className="close-button"
+        <div className="flex flex-col flex-1 min-h-0 border-t border-border">
+            <nav className="flex items-center h-10 px-2 border-b border-border bg-card gap-1">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
                     onClick={() => dispatch(flowsActions.select([]))}
+                    data-testid="close-button-id"
                 >
-                    <i className="fa fa-times-circle"></i>
-                </button>
-                {tabs.map((tabId) => (
-                    <a
-                        key={tabId}
-                        href="#"
-                        className={classnames({ active: active === tabId })}
-                        onClick={(event) => {
-                            event.preventDefault();
-                            dispatch(selectTab(tabId));
-                        }}
-                    >
-                        {allTabs[tabId].displayName}
-                    </a>
-                ))}
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Close</span>
+                </Button>
+                <div className="flex items-center gap-1 border-l border-border pl-2 ml-1">
+                    {tabs.map((tabId) => (
+                        <button
+                            key={tabId}
+                            className={cn(
+                                "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
+                                "hover:bg-accent hover:text-accent-foreground",
+                                active === tabId
+                                    ? "bg-accent text-accent-foreground"
+                                    : "text-muted-foreground",
+                            )}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                dispatch(selectTab(tabId));
+                            }}
+                        >
+                            {allTabs[tabId].displayName}
+                        </button>
+                    ))}
+                </div>
             </nav>
-            <Tab flow={flow} />
+            <div className="flex-1 overflow-auto p-2">
+                <Tab flow={flow} />
+            </div>
         </div>
     );
 }

@@ -1,4 +1,7 @@
 import * as React from "react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 type ModeToggleProps = {
     value: boolean;
@@ -16,20 +19,18 @@ export function ModeToggle({
     const id = React.useId();
 
     return (
-        <div className="mode-entry">
-            <input
-                type="checkbox"
-                name={`mode-checkbox-${id}`}
-                id={`mode-checkbox-${id}`}
+        <div className="flex items-center gap-3 py-2">
+            <Switch
+                id={`mode-switch-${id}`}
                 checked={value}
-                onChange={onChange}
+                onCheckedChange={() => onChange({} as React.ChangeEvent)}
             />
-            <label
-                htmlFor={`mode-checkbox-${id}`}
-                style={{ marginBottom: 0, fontWeight: "normal" }}
+            <Label
+                htmlFor={`mode-switch-${id}`}
+                className="text-sm font-normal cursor-pointer"
             >
                 {label}
-            </label>
+            </Label>
             {children}
         </div>
     );

@@ -16,13 +16,17 @@ export default function Modes() {
     );
 
     return (
-        <div className="modes">
-            <h2>Intercept Traffic</h2>
-            <p>Configure how you want to intercept traffic with mitmproxy.</p>
+        <div className="p-6 space-y-6">
+            <div>
+                <h2 className="text-xl font-semibold">Intercept Traffic</h2>
+                <p className="text-muted-foreground">
+                    Configure how you want to intercept traffic with mitmproxy.
+                </p>
+            </div>
 
-            <div className="modes-category green-left-border">
-                <h3>Recommended</h3>
-                <div className="modes-container">
+            <div className="border-l-4 border-green-500 pl-4 space-y-4">
+                <h3 className="text-lg font-medium">Recommended</h3>
+                <div className="grid gap-4 md:grid-cols-2">
                     <Regular />
                     {localModeUnavailable !== null ? (
                         <MissingMode
@@ -36,9 +40,9 @@ export default function Modes() {
                     <Reverse />
                 </div>
             </div>
-            <div className="modes-category gray-left-border">
-                <h3>Advanced</h3>
-                <div className="modes-container">
+            <div className="border-l-4 border-muted-foreground pl-4 space-y-4">
+                <h3 className="text-lg font-medium">Advanced</h3>
+                <div className="grid gap-4 md:grid-cols-2">
                     <Socks />
                     <Upstream />
                     <Dns />

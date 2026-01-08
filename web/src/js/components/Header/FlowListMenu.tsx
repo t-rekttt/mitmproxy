@@ -5,26 +5,27 @@ import Button from "../common/Button";
 import { update as updateOptions } from "../../ducks/options";
 import { useAppDispatch, useAppSelector } from "../../ducks";
 import { FilterName, setFilter, setHighlight } from "../../ducks/ui/filter";
+import { FastForward } from "lucide-react";
 
 FlowListMenu.title = "Flow List";
 
 export default function FlowListMenu() {
     return (
-        <div className="main-menu">
-            <div className="menu-group">
-                <div className="menu-content">
+        <div className="flex gap-6 p-2">
+            <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
                     <FlowFilterInput />
                     <HighlightInput />
                 </div>
-                <div className="menu-legend">Find</div>
+                <div className="text-xs text-muted-foreground">Find</div>
             </div>
 
-            <div className="menu-group">
-                <div className="menu-content">
+            <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
                     <InterceptInput />
                     <ResumeAll />
                 </div>
-                <div className="menu-legend">Intercept</div>
+                <div className="text-xs text-muted-foreground">Intercept</div>
             </div>
         </div>
     );
@@ -52,7 +53,7 @@ function FlowFilterInput() {
             value={value}
             placeholder="Search"
             icon={FilterIcon.SEARCH}
-            color="black"
+            color="currentColor"
             onChange={(expr) => dispatch(setFilter(expr))}
         />
     );
@@ -78,9 +79,8 @@ export function ResumeAll() {
     const dispatch = useAppDispatch();
     return (
         <Button
-            className="btn-sm"
             title="[a]ccept all"
-            icon="fa-forward text-success"
+            icon={FastForward}
             onClick={() => dispatch(flowsActions.resumeAll())}
         >
             Resume All

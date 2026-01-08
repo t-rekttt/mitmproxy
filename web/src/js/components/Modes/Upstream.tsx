@@ -13,6 +13,7 @@ import ValueEditor from "../editors/ValueEditor";
 import { ServerStatus } from "./CaptureSetup";
 import { ModeToggle } from "./ModeToggle";
 import { Popover } from "./Popover";
+import { Label } from "@/components/ui/label";
 
 export default function Upstream() {
     const serverState = useAppSelector((state) => state.modes.upstream);
@@ -29,11 +30,11 @@ export default function Upstream() {
     });
 
     return (
-        <div>
-            <h4 className="mode-title">
+        <div className="space-y-2">
+            <h4 className="text-sm font-semibold">
                 Explicit HTTP(S) Proxy (With Upstream Proxy)
             </h4>
-            <p className="mode-description">
+            <p className="text-xs text-muted-foreground">
                 All requests are forwarded to a second HTTP(S) proxy server.
             </p>
             {servers}
@@ -62,42 +63,47 @@ function UpstreamRow({
                 }}
             >
                 <ValueEditor
-                    className="mode-upstream-input"
+                    className="px-2 py-1 text-sm bg-background border border-input rounded min-w-[180px]"
                     content={server.destination?.toString() || ""}
                     onEditDone={(value) =>
                         dispatch(setDestination({ server, value }))
                     }
                     placeholder="http://example.com:8080"
                 />
-                <Popover iconClass="fa fa-cog">
-                    <h4>Advanced Configuration</h4>
-                    <p>Listen Host</p>
-                    <ValueEditor
-                        className="mode-input"
-                        content={server.listen_host || ""}
-                        onEditDone={(host) =>
-                            dispatch(setListenHost({ server, value: host }))
-                        }
-                    />
-
-                    <p>Listen Port</p>
-                    <ValueEditor
-                        className="mode-input"
-                        content={
-                            server.listen_port
-                                ? server.listen_port.toString()
-                                : ""
-                        }
-                        placeholder="8080"
-                        onEditDone={(port) =>
-                            dispatch(
-                                setListenPort({
-                                    server,
-                                    value: parseInt(port),
-                                }),
-                            )
-                        }
-                    />
+                <Popover>
+                    <h4 className="font-semibold mb-3">Advanced Configuration</h4>
+                    <div className="space-y-3">
+                        <div>
+                            <Label className="text-xs">Listen Host</Label>
+                            <ValueEditor
+                                className="mt-1 w-full px-2 py-1 text-sm bg-background border border-input rounded"
+                                content={server.listen_host || ""}
+                                onEditDone={(host) =>
+                                    dispatch(setListenHost({ server, value: host }))
+                                }
+                            />
+                        </div>
+                        <div>
+                            <Label className="text-xs">Listen Port</Label>
+                            <ValueEditor
+                                className="mt-1 w-full px-2 py-1 text-sm bg-background border border-input rounded"
+                                content={
+                                    server.listen_port
+                                        ? server.listen_port.toString()
+                                        : ""
+                                }
+                                placeholder="8080"
+                                onEditDone={(port) =>
+                                    dispatch(
+                                        setListenPort({
+                                            server,
+                                            value: parseInt(port),
+                                        }),
+                                    )
+                                }
+                            />
+                        </div>
+                    </div>
                 </Popover>
             </ModeToggle>
             <ServerStatus error={error} backendState={backendState} />

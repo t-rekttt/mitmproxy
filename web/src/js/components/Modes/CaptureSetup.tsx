@@ -3,12 +3,13 @@ import { useEffect, useRef } from "react";
 import type { ServerInfo } from "../../ducks/backendState";
 import { formatAddress } from "../../utils";
 import QRCode from "qrcode";
+import { cn } from "@/lib/utils";
 
 export default function CaptureSetup() {
     return (
-        <div style={{ padding: "1em 2em" }}>
-            <h3>mitmproxy is running.</h3>
-            <p>
+        <div className="p-6">
+            <h3 className="text-lg font-semibold mb-2">mitmproxy is running.</h3>
+            <p className="text-muted-foreground">
                 No flows have been recorded yet.
                 <br />
                 To start capturing traffic, please configure your settings in
@@ -66,9 +67,11 @@ function ServerDescription({
                     </div>
                 )}
                 {wireguard_conf && (
-                    <div className="wireguard-config">
-                        <pre>{wireguard_conf}</pre>
-                        <canvas ref={qrCode} />
+                    <div className="mt-2 space-y-2">
+                        <pre className="p-2 bg-muted rounded text-xs overflow-auto">
+                            {wireguard_conf}
+                        </pre>
+                        <canvas ref={qrCode} className="rounded" />
                     </div>
                 )}
             </>
@@ -85,9 +88,9 @@ export function ServerStatus({
     backendState?: ServerInfo;
 }) {
     return (
-        <div className="mode-status">
+        <div className="mt-1 text-xs">
             {error ? (
-                <div className="text-danger">{error}</div>
+                <div className="text-destructive">{error}</div>
             ) : (
                 backendState && <ServerDescription {...backendState} />
             )}

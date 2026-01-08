@@ -21,8 +21,8 @@ export function formatAddress(
     }
     return (
         <tr>
-            <td>{desc}:</td>
-            <td>{address.join(":")}</td>
+            <td className="py-1 pr-4 text-muted-foreground w-40">{desc}:</td>
+            <td className="py-1">{address.join(":")}</td>
         </tr>
     );
 }
@@ -43,35 +43,35 @@ export function ConnectionInfo({ conn }: ConnectionInfoProps) {
         address_info = formatAddress("Address", conn.peername);
     }
     return (
-        <table className="connection-table">
+        <table className="w-full text-sm">
             <tbody>
                 {address_info}
                 {conn.sni ? (
                     <tr>
-                        <td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">
                             <abbr title="TLS Server Name Indication">SNI</abbr>:
                         </td>
-                        <td>{conn.sni}</td>
+                        <td className="py-1">{conn.sni}</td>
                     </tr>
                 ) : null}
                 {conn.alpn ? (
                     <tr>
-                        <td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">
                             <abbr title="ALPN protocol negotiated">ALPN</abbr>:
                         </td>
-                        <td>{conn.alpn}</td>
+                        <td className="py-1">{conn.alpn}</td>
                     </tr>
                 ) : null}
                 {conn.tls_version ? (
                     <tr>
-                        <td>TLS Version:</td>
-                        <td>{conn.tls_version}</td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">TLS Version:</td>
+                        <td className="py-1">{conn.tls_version}</td>
                     </tr>
                 ) : null}
                 {conn.cipher ? (
                     <tr>
-                        <td>TLS Cipher:</td>
-                        <td>{conn.cipher}</td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">TLS Cipher:</td>
+                        <td className="py-1">{conn.cipher}</td>
                     </tr>
                 ) : null}
             </tbody>
@@ -81,11 +81,11 @@ export function ConnectionInfo({ conn }: ConnectionInfoProps) {
 
 function attrList(data: [string, string][]): React.ReactElement {
     return (
-        <dl className="cert-attributes">
+        <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 text-sm">
             {data.map(([k, v]) => (
                 <React.Fragment key={k}>
-                    <dt>{k}</dt>
-                    <dd>{v}</dd>
+                    <dt className="text-muted-foreground">{k}</dt>
+                    <dd className="text-foreground">{v}</dd>
                 </React.Fragment>
             ))}
         </dl>
@@ -98,50 +98,50 @@ export function CertificateInfo({ flow }: { flow: Flow }): React.ReactElement {
 
     return (
         <>
-            <h4 key="name">Server Certificate</h4>
-            <table className="certificate-table">
+            <h4 key="name" className="text-sm font-semibold mt-4 mb-2">Server Certificate</h4>
+            <table className="w-full text-sm">
                 <tbody>
                     <tr>
-                        <td>Type</td>
-                        <td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">Type</td>
+                        <td className="py-1">
                             {cert.keyinfo[0]}, {cert.keyinfo[1]} bits
                         </td>
                     </tr>
                     <tr>
-                        <td>SHA256 digest</td>
-                        <td>{cert.sha256}</td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">SHA256 digest</td>
+                        <td className="py-1 font-mono text-xs break-all">{cert.sha256}</td>
                     </tr>
                     <tr>
-                        <td>Valid from</td>
-                        <td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">Valid from</td>
+                        <td className="py-1">
                             {formatTimeStamp(cert.notbefore, {
                                 includeMilliseconds: false,
                             })}
                         </td>
                     </tr>
                     <tr>
-                        <td>Valid to</td>
-                        <td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">Valid to</td>
+                        <td className="py-1">
                             {formatTimeStamp(cert.notafter, {
                                 includeMilliseconds: false,
                             })}
                         </td>
                     </tr>
                     <tr>
-                        <td>Subject Alternative Names</td>
-                        <td>{cert.altnames.join(", ")}</td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">Subject Alternative Names</td>
+                        <td className="py-1">{cert.altnames.join(", ")}</td>
                     </tr>
                     <tr>
-                        <td>Subject</td>
-                        <td>{attrList(cert.subject)}</td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40 align-top">Subject</td>
+                        <td className="py-1">{attrList(cert.subject)}</td>
                     </tr>
                     <tr>
-                        <td>Issuer</td>
-                        <td>{attrList(cert.issuer)}</td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40 align-top">Issuer</td>
+                        <td className="py-1">{attrList(cert.issuer)}</td>
                     </tr>
                     <tr>
-                        <td>Serial</td>
-                        <td>{cert.serial}</td>
+                        <td className="py-1 pr-4 text-muted-foreground w-40">Serial</td>
+                        <td className="py-1 font-mono text-xs">{cert.serial}</td>
                     </tr>
                 </tbody>
             </table>
@@ -151,13 +151,13 @@ export function CertificateInfo({ flow }: { flow: Flow }): React.ReactElement {
 
 export default function Connection({ flow }: { flow: Flow }) {
     return (
-        <section className="detail">
-            <h4>Client Connection</h4>
+        <section className="p-4 space-y-4">
+            <h4 className="text-sm font-semibold">Client Connection</h4>
             <ConnectionInfo conn={flow.client_conn} />
 
             {flow.server_conn?.address && (
                 <>
-                    <h4>Server Connection</h4>
+                    <h4 className="text-sm font-semibold mt-4">Server Connection</h4>
                     <ConnectionInfo conn={flow.server_conn} />
                 </>
             )}

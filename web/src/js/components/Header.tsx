@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import classnames from "classnames";
+import { useEffect, useState, type JSX } from "react";
 import FileMenu from "./Header/FileMenu";
 import ConnectionIndicator from "./Header/ConnectionIndicator";
 import ThemeToggle from "./Header/ThemeToggle";
@@ -9,8 +8,13 @@ import { useAppDispatch, useAppSelector } from "../ducks";
 import FlowListMenu from "./Header/FlowListMenu";
 import OptionMenu from "./Header/OptionMenu";
 import FlowMenu from "./Header/FlowMenu";
-import type { Menu } from "./ProxyApp";
 import { Tab, setCurrent } from "../ducks/ui/tabs";
+import { cn } from "@/lib/utils";
+
+export interface Menu {
+    (): JSX.Element;
+    title: string;
+}
 
 const tabs: { [key in Tab]: Menu } = {
     [Tab.Capture]: CaptureMenu,
@@ -46,7 +50,7 @@ export default function Header() {
         }
     }, [selectedFlows, wasFlowSelected, currentTab]);
 
-    function handleClick(tab: Tab, e: React.MouseEvent<HTMLAnchorElement>) {
+    function handleClick(tab: Tab, e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         dispatch(setCurrent(tab));
     }
@@ -54,25 +58,33 @@ export default function Header() {
     const ActiveMenu = tabs[currentTab];
 
     return (
-        <header>
-            <nav className="nav-tabs nav-tabs-lg">
+        <header className="flex-shrink-0 border-b border-border bg-card">
+            <nav className="flex items-center h-10 px-2 gap-1">
                 <FileMenu />
-                {entries.map((tab) => (
-                    <a
-                        key={tab}
-                        href="#"
-                        className={classnames({ active: tab === currentTab })}
-                        onClick={(e) => handleClick(tab, e)}
-                    >
-                        {tabs[tab].title}
-                    </a>
-                ))}
+                <div className="flex items-center gap-1 border-l border-border pl-2 ml-1">
+                    {entries.map((tab) => (
+                        <button
+                            key={tab}
+                            className={cn(
+                                "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
+                                "hover:bg-accent hover:text-accent-foreground",
+                                tab === currentTab
+                                    ? "bg-accent text-accent-foreground"
+                                    : "text-muted-foreground",
+                            )}
+                            onClick={(e) => handleClick(tab, e)}
+                        >
+                            {tabs[tab].title}
+                        </button>
+                    ))}
+                </div>
+                <div className="flex-1" />
                 <ThemeToggle />
                 <HideInStatic>
                     <ConnectionIndicator />
                 </HideInStatic>
             </nav>
-            <div>
+            <div className="px-2 py-1.5 border-t border-border">
                 <ActiveMenu />
             </div>
         </header>

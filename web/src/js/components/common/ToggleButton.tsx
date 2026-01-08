@@ -1,4 +1,6 @@
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { CheckSquare, Square } from "lucide-react";
 
 type ToggleButtonProps = {
     checked: boolean;
@@ -12,20 +14,18 @@ export default function ToggleButton({
     text,
 }: ToggleButtonProps) {
     return (
-        <div
-            className={
-                "btn btn-toggle " + (checked ? "btn-primary" : "btn-default")
-            }
+        <Button
+            variant={checked ? "secondary" : "ghost"}
+            size="sm"
             onClick={onToggle}
+            className="h-6 px-2 text-xs gap-1"
         >
-            <i
-                className={
-                    "fa fa-fw " +
-                    (checked ? "fa-check-square-o" : "fa-square-o")
-                }
-            />
-            &nbsp;
+            {checked ? (
+                <CheckSquare className="h-3 w-3" />
+            ) : (
+                <Square className="h-3 w-3" />
+            )}
             {text}
-        </div>
+        </Button>
     );
 }

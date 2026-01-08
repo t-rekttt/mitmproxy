@@ -16,54 +16,54 @@ const Summary: React.FC<{
 const Questions: React.FC<{
     message: DNSMessage;
 }> = ({ message }) => (
-    <>
-        <h5>{message.recursion_desired ? "Recursive " : ""}Question</h5>
-        <table>
+    <div className="space-y-2">
+        <h5 className="text-sm font-semibold">{message.recursion_desired ? "Recursive " : ""}Question</h5>
+        <table className="w-full text-sm">
             <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Class</th>
+                <tr className="border-b border-border">
+                    <th className="text-left py-1 font-medium text-muted-foreground">Name</th>
+                    <th className="text-left py-1 font-medium text-muted-foreground">Type</th>
+                    <th className="text-left py-1 font-medium text-muted-foreground">Class</th>
                 </tr>
             </thead>
             <tbody>
                 {message.questions.map((question, index) => (
-                    <tr key={index}>
-                        <td>{question.name}</td>
-                        <td>{question.type}</td>
-                        <td>{question.class}</td>
+                    <tr key={index} className="border-b border-border/50">
+                        <td className="py-1">{question.name}</td>
+                        <td className="py-1">{question.type}</td>
+                        <td className="py-1">{question.class}</td>
                     </tr>
                 ))}
             </tbody>
         </table>
-    </>
+    </div>
 );
 
 const ResourceRecords: React.FC<{
     name: string;
     values: DNSResourceRecord[];
 }> = ({ name, values }) => (
-    <>
-        <h5>{name}</h5>
+    <div className="space-y-2">
+        <h5 className="text-sm font-semibold">{name}</h5>
         {values.length > 0 ? (
-            <table>
+            <table className="w-full text-sm">
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Class</th>
-                        <th>TTL</th>
-                        <th>Data</th>
+                    <tr className="border-b border-border">
+                        <th className="text-left py-1 font-medium text-muted-foreground">Name</th>
+                        <th className="text-left py-1 font-medium text-muted-foreground">Type</th>
+                        <th className="text-left py-1 font-medium text-muted-foreground">Class</th>
+                        <th className="text-left py-1 font-medium text-muted-foreground">TTL</th>
+                        <th className="text-left py-1 font-medium text-muted-foreground">Data</th>
                     </tr>
                 </thead>
                 <tbody>
                     {values.map((rr, index) => (
-                        <tr key={index}>
-                            <td>{rr.name}</td>
-                            <td>{rr.type}</td>
-                            <td>{rr.class}</td>
-                            <td>{rr.ttl}</td>
-                            <td>
+                        <tr key={index} className="border-b border-border/50">
+                            <td className="py-1">{rr.name}</td>
+                            <td className="py-1">{rr.type}</td>
+                            <td className="py-1">{rr.class}</td>
+                            <td className="py-1">{rr.ttl}</td>
+                            <td className="py-1">
                                 {JSON.stringify(rr.data).replace(/^"|"$/g, "")}
                             </td>
                         </tr>
@@ -71,30 +71,30 @@ const ResourceRecords: React.FC<{
                 </tbody>
             </table>
         ) : (
-            "—"
+            <span className="text-muted-foreground">—</span>
         )}
-    </>
+    </div>
 );
 
 const Message: React.FC<{
     type: "request" | "response";
     message: DNSMessage;
 }> = ({ type, message }) => (
-    <section className={"dns-" + type}>
-        <div className={`first-line ${type}-line`}>
+    <section className="p-4 space-y-4">
+        <div className="px-4 py-2 font-mono text-sm bg-muted/30 border-b border-border rounded-t">
             <Summary message={message} />
         </div>
         <Questions message={message} />
-        <hr />
+        <div className="border-t border-border" />
         <ResourceRecords
             name={`${message.authoritative_answer ? "Authoritative " : ""}${
                 message.recursion_available ? "Recursive " : ""
             }Answer`}
             values={message.answers}
         />
-        <hr />
+        <div className="border-t border-border" />
         <ResourceRecords name="Authority" values={message.authorities} />
-        <hr />
+        <div className="border-t border-border" />
         <ResourceRecords name="Additional" values={message.additionals} />
     </section>
 );

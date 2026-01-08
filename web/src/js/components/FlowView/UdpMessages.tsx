@@ -4,7 +4,7 @@ import Messages from "./Messages";
 
 export default function UdpMessages({ flow }: { flow: UDPFlow }) {
     return (
-        <section className="udp">
+        <section className="p-4">
             <Messages flow={flow} messages_meta={flow.messages_meta} />
         </section>
     );

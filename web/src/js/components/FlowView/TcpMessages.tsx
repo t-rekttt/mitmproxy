@@ -4,7 +4,7 @@ import Messages from "./Messages";
 
 export default function TcpMessages({ flow }: { flow: TCPFlow }) {
     return (
-        <section className="tcp">
+        <section className="p-4">
             <Messages flow={flow} messages_meta={flow.messages_meta} />
         </section>
     );

@@ -17,6 +17,16 @@ import ValueEditor from "../editors/ValueEditor";
 import { ServerStatus } from "./CaptureSetup";
 import { ModeToggle } from "./ModeToggle";
 import { Popover } from "./Popover";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { PlusSquare, Trash2 } from "lucide-react";
 
 interface ReverseToggleRowProps {
     removable: boolean;
@@ -31,12 +41,12 @@ export default function Reverse() {
     const backendState = useAppSelector((state) => state.backendState.servers);
 
     return (
-        <div>
-            <h4 className="mode-title">Reverse Proxy</h4>
-            <p className="mode-description">
+        <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Reverse Proxy</h4>
+            <p className="text-xs text-muted-foreground">
                 Requests are forwarded to a preconfigured destination.
             </p>
-            <div className="mode-reverse-servers">
+            <div className="space-y-2">
                 {servers.map((server, i) => (
                     <ReverseToggleRow
                         key={server.ui_id}
@@ -45,13 +55,15 @@ export default function Reverse() {
                         backendState={backendState[getSpec(server)]}
                     />
                 ))}
-                <div
-                    className="mode-reverse-add-server"
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 text-xs"
                     onClick={() => dispatch(addServer())}
                 >
-                    <i className="fa fa-plus-square-o" aria-hidden="true"></i>
+                    <PlusSquare className="h-4 w-4" />
                     Add additional server
-                </div>
+                </Button>
             </div>
         </div>
     );
@@ -84,66 +96,78 @@ function ReverseToggleRow({
                     dispatch(setActive({ server, value: !server.active }));
                 }}
             >
-                <select
-                    name="protocols"
-                    className="mode-reverse-dropdown"
+                <Select
                     value={server.protocol}
-                    onChange={(e) => {
+                    onValueChange={(value) => {
                         dispatch(
                             setProtocol({
                                 server,
-                                value: e.target.value as ReverseProxyProtocols,
+                                value: value as ReverseProxyProtocols,
                             }),
                         );
                     }}
                 >
-                    {protocols.map((prot) => (
-                        <option key={prot} value={prot}>
-                            {prot}
-                        </option>
-                    ))}
-                </select>
-                traffic to
+                    <SelectTrigger className="h-7 w-auto min-w-[80px] text-xs">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {protocols.map((prot) => (
+                            <SelectItem key={prot} value={prot}>
+                                {prot}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <span className="text-sm">traffic to</span>
                 <ValueEditor
-                    className="mode-reverse-input"
+                    className="px-2 py-1 text-sm bg-background border border-input rounded min-w-[120px]"
                     content={server.destination?.toString() || ""}
                     onEditDone={(value) =>
                         dispatch(setDestination({ server, value }))
                     }
                     placeholder="example.com"
                 />
-                <Popover iconClass="fa fa-cog">
-                    <h4>Advanced Configuration</h4>
-                    <p>Listen Host</p>
-                    <ValueEditor
-                        className="mode-input"
-                        content={server.listen_host || ""}
-                        onEditDone={(value) =>
-                            dispatch(setListenHost({ server, value }))
-                        }
-                        placeholder="*"
-                    />
-                    <p>Listen Port</p>
-                    <ValueEditor
-                        className="mode-input"
-                        content={String(server.listen_port || "")}
-                        onEditDone={(value) =>
-                            dispatch(
-                                setListenPort({
-                                    server,
-                                    value: value as unknown as number,
-                                }),
-                            )
-                        }
-                        placeholder="8080"
-                    />
+                <Popover>
+                    <h4 className="font-semibold mb-3">Advanced Configuration</h4>
+                    <div className="space-y-3">
+                        <div>
+                            <Label className="text-xs">Listen Host</Label>
+                            <ValueEditor
+                                className="mt-1 w-full px-2 py-1 text-sm bg-background border border-input rounded"
+                                content={server.listen_host || ""}
+                                onEditDone={(value) =>
+                                    dispatch(setListenHost({ server, value }))
+                                }
+                                placeholder="*"
+                            />
+                        </div>
+                        <div>
+                            <Label className="text-xs">Listen Port</Label>
+                            <ValueEditor
+                                className="mt-1 w-full px-2 py-1 text-sm bg-background border border-input rounded"
+                                content={String(server.listen_port || "")}
+                                onEditDone={(value) =>
+                                    dispatch(
+                                        setListenPort({
+                                            server,
+                                            value: value as unknown as number,
+                                        }),
+                                    )
+                                }
+                                placeholder="8080"
+                            />
+                        </div>
+                    </div>
                 </Popover>
                 {removable && (
-                    <i
-                        className="fa fa-fw fa-trash fa-lg"
-                        aria-hidden="true"
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-destructive hover:text-destructive"
                         onClick={deleteServer}
-                    ></i>
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
                 )}
             </ModeToggle>
             <ServerStatus error={error} backendState={backendState} />

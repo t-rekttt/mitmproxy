@@ -1,5 +1,7 @@
+import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -9,7 +11,13 @@ export default defineConfig({
                 plugins: [["babel-plugin-react-compiler", {}]],
             },
         }),
+        tailwindcss(),
     ],
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+        },
+    },
     base: "",
     build: {
         outDir: "../mitmproxy/tools/web",
@@ -17,10 +25,7 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: (id) => {
-                    if (
-                        id.includes("node_modules") ||
-                        id.includes("vendor.less")
-                    ) {
+                    if (id.includes("node_modules")) {
                         return "vendor";
                     }
                     return null;

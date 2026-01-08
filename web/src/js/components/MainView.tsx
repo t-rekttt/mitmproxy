@@ -6,6 +6,7 @@ import { useAppSelector } from "../ducks";
 import CaptureSetup from "./Modes/CaptureSetup";
 import Modes from "./Modes";
 import { Tab } from "../ducks/ui/tabs";
+import { cn } from "@/lib/utils";
 
 export default function MainView() {
     const hasOneFlowSelected = useAppSelector(
@@ -15,15 +16,17 @@ export default function MainView() {
     const currentTab = useAppSelector((state) => state.ui.tabs.current);
 
     return (
-        <div className="main-view">
+        <div className={cn("flex-1 flex flex-col min-h-0 overflow-hidden")}>
             {currentTab === Tab.Capture ? (
-                <Modes />
+                <div className="flex-1 overflow-auto">
+                    <Modes />
+                </div>
             ) : (
                 <>
                     {hasFlows ? <FlowTable /> : <CaptureSetup />}
                     {hasOneFlowSelected && (
                         <>
-                            <Splitter key="splitter" />
+                            <Splitter key="splitter" axis="y" />
                             <FlowView key="flowDetails" />
                         </>
                     )}

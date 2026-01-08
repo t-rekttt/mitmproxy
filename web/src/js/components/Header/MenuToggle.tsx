@@ -12,9 +12,14 @@ type MenuToggleProps = {
 
 export function MenuToggle({ value, onChange, children }: MenuToggleProps) {
     return (
-        <div className="menu-entry">
-            <label>
-                <input type="checkbox" checked={value} onChange={onChange} />
+        <div className="flex items-center text-sm">
+            <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                    type="checkbox"
+                    checked={value}
+                    onChange={onChange}
+                    className="h-4 w-4 rounded border-input"
+                />
                 {children}
             </label>
         </div>

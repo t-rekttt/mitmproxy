@@ -3,8 +3,19 @@ import type { ComponentProps } from "react";
 import React from "react";
 import type { Option } from "../../ducks/options";
 import { update as updateOptions } from "../../ducks/options";
-import classnames from "classnames";
 import { useAppDispatch, useAppSelector } from "../../ducks";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const stopPropagation = (e) => {
     if (e.key !== "Escape") {
@@ -23,28 +34,28 @@ interface OptionProps<S>
     onChange: (value: S) => any;
 }
 
-function BooleanOption({ value, onChange, ...props }: OptionProps<boolean>) {
+function BooleanOption({ value, onChange, name, ...props }: OptionProps<boolean> & { name?: string }) {
     return (
-        <div className="checkbox">
-            <label>
-                <input
-                    type="checkbox"
-                    checked={value}
-                    onChange={(e) => onChange(e.target.checked)}
-                    {...props}
-                />
+        <div className="flex items-center space-x-2">
+            <Switch
+                id={name}
+                checked={value}
+                onCheckedChange={onChange}
+            />
+            <Label htmlFor={name} className="text-sm text-muted-foreground">
                 Enable
-            </label>
+            </Label>
         </div>
     );
 }
 
 function StringOption({ value, onChange, ...props }: OptionProps<string>) {
     return (
-        <input
+        <Input
             type="text"
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
+            className="h-8"
             {...props}
         />
     );
@@ -60,10 +71,11 @@ function Optional(Component) {
 
 function NumberOption({ value, onChange, ...props }: OptionProps<number>) {
     return (
-        <input
+        <Input
             type="number"
             value={value}
             onChange={(e) => onChange(parseInt(e.target.value))}
+            className="h-8"
             {...props}
         />
     );
@@ -77,20 +89,22 @@ export function ChoicesOption({
     value,
     onChange,
     choices,
+    name,
     ...props
-}: ChoiceOptionProps) {
+}: ChoiceOptionProps & { name?: string }) {
     return (
-        <select
-            onChange={(e) => onChange(e.target.value)}
-            value={value}
-            {...props}
-        >
-            {choices.map((choice) => (
-                <option key={choice} value={choice}>
-                    {choice}
-                </option>
-            ))}
-        </select>
+        <Select value={value} onValueChange={onChange}>
+            <SelectTrigger className="h-8">
+                <SelectValue placeholder="Select..." />
+            </SelectTrigger>
+            <SelectContent>
+                {choices.map((choice) => (
+                    <SelectItem key={choice} value={choice}>
+                        {choice}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
     );
 }
 
@@ -105,9 +119,8 @@ function StringSequenceOption({
 
     const handleChange = (e) => {
         const newValue = e.target.value;
-        setTextAreaValue(newValue); //save in the state the current input value
+        setTextAreaValue(newValue);
         onChange(
-            //we send to the backend only the strings that are not empty
             newValue
                 .split("\n")
                 .map((line) => line.trim())
@@ -116,10 +129,11 @@ function StringSequenceOption({
     };
 
     return (
-        <textarea
+        <Textarea
             rows={height}
             value={textAreaValue}
             onChange={handleChange}
+            className="min-h-[60px] resize-y"
             {...props}
         />
     );
@@ -136,9 +150,10 @@ export const Options = {
 
 function PureOption({ choices, type, value, onChange, name, error }) {
     let Opt;
-    const props: Partial<OptionProps<any> & ChoiceOptionProps> = {
+    const props: Partial<OptionProps<any> & ChoiceOptionProps & { name?: string }> = {
         onChange,
         value,
+        name,
     };
     if (choices) {
         Opt = ChoicesOption;
@@ -147,13 +162,10 @@ function PureOption({ choices, type, value, onChange, name, error }) {
         Opt = Options[type];
         if (!Opt) throw `unknown option type ${type}`;
     }
-    if (Opt !== BooleanOption) {
-        props.className = "form-control";
-    }
 
     return (
-        <div className={classnames({ "has-error": error })}>
-            <Opt name={name} onKeyDown={stopPropagation} {...props} />
+        <div className={cn(error && "ring-2 ring-destructive rounded-md")}>
+            <Opt onKeyDown={stopPropagation} {...props} />
         </div>
     );
 }

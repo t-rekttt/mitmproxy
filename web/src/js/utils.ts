@@ -91,12 +91,28 @@ export function fetchApi(
         options.headers = options.headers || {};
         options.headers["X-XSRFToken"] = xsrf();
     }
-    if (url.startsWith("/")) {
+
+    // Support configurable backend URL for development
+    const backendUrl = import.meta.env.VITE_MITMPROXY_BACKEND_URL;
+    if (backendUrl) {
+        if (url.startsWith("./")) {
+            url = backendUrl + url.slice(1);
+        } else if (url.startsWith("/")) {
+            url = backendUrl + url;
+        }
+    } else if (url.startsWith("/")) {
         url = "." + url;
     }
 
+    // Add auth token if available
+    const token = import.meta.env.VITE_MITMPROXY_TOKEN;
+    if (token) {
+        options.headers = options.headers || {};
+        options.headers["Authorization"] = `Bearer ${token}`;
+    }
+
     return fetch(url, {
-        credentials: "same-origin",
+        credentials: backendUrl ? "omit" : "same-origin",
         ...options,
     });
 }

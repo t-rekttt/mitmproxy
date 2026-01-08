@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, type JSX } from "react";
 import classnames from "classnames";
 import { fetchApi, runCommand } from "../utils";
 import Filt from "../filt/command";
+import { Terminal } from "lucide-react";
 
 type CommandParameter = {
     name: string;
@@ -70,13 +71,18 @@ export function Results({ results }: ResultProps) {
     }, []);
 
     return (
-        <div className="command-result" ref={resultElement}>
+        <div
+            className="max-h-40 overflow-auto text-sm font-mono p-2 bg-muted/50 rounded"
+            ref={resultElement}
+        >
             {results.map((result, i) => (
-                <div key={i}>
-                    <div>
+                <div key={i} className="mb-2">
+                    <div className="text-primary">
                         <strong>$ {result.command}</strong>
                     </div>
-                    {result.result}
+                    <div className="text-muted-foreground whitespace-pre-wrap">
+                        {result.result}
+                    </div>
                 </div>
             ))}
         </div>
@@ -99,25 +105,26 @@ export function CommandHelp({
         argumentSuggestion.push(<span key={i}>{nextArgs[i]} </span>);
     }
     return (
-        <div className="argument-suggestion popover top">
-            <div className="arrow" />
-            <div className="popover-content">
+        <div className="relative mb-2 p-3 bg-popover border border-border rounded-md shadow-md text-sm">
+            <div className="space-y-1">
                 {argumentSuggestion.length > 0 && (
                     <div>
-                        <strong>Argument suggestion:</strong>{" "}
-                        {argumentSuggestion}
+                        <strong className="text-foreground">Argument suggestion:</strong>{" "}
+                        <span className="font-mono">{argumentSuggestion}</span>
                     </div>
                 )}
                 {help?.includes("->") && (
                     <div>
-                        <strong>Signature help: </strong>
-                        {help}
+                        <strong className="text-foreground">Signature help: </strong>
+                        <span className="font-mono text-muted-foreground">{help}</span>
                     </div>
                 )}
-                {description && <div># {description}</div>}
+                {description && (
+                    <div className="text-muted-foreground"># {description}</div>
+                )}
                 <div>
-                    <strong>Available Commands: </strong>
-                    <p className="available-commands">
+                    <strong className="text-foreground">Available Commands: </strong>
+                    <p className="text-xs text-muted-foreground font-mono mt-1 max-h-20 overflow-auto">
                         {JSON.stringify(availableCommands)}
                     </p>
                 </div>
@@ -279,8 +286,8 @@ export default function CommandBar() {
     };
 
     return (
-        <div className="command">
-            <div className="command-title">Command Result</div>
+        <div className="p-2 border-t border-border bg-background">
+            <div className="text-xs font-medium text-muted-foreground mb-2">Command Result</div>
             <Results results={results} />
             <CommandHelp
                 nextArgs={nextArgs}
@@ -289,14 +296,14 @@ export default function CommandBar() {
                 description={description}
                 availableCommands={availableCommands}
             />
-            <div className={classnames("command-input input-group")}>
-                <span className="input-group-addon">
-                    <i className={"fa fa-fw fa-terminal"} />
+            <div className="flex items-center">
+                <span className="flex items-center justify-center px-2 bg-muted border border-r-0 border-input rounded-l h-8">
+                    <Terminal className="h-4 w-4" />
                 </span>
                 <input
                     type="text"
                     placeholder="Enter command"
-                    className="form-control"
+                    className="h-8 flex-1 px-2 py-1 text-sm bg-background border border-input rounded-r focus:outline-none focus:ring-1 focus:ring-ring"
                     value={input || ""}
                     onChange={onChange}
                     onKeyDown={onKeyDown}

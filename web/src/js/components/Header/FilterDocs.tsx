@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { fetchApi } from "../../utils";
+import { Loader2, ExternalLink } from "lucide-react";
 
 type FilterDocsProps = {
     selectHandler: (cmd: string) => void;
@@ -43,9 +44,9 @@ export default class FilterDocs extends Component<
     render() {
         const { doc } = this.state;
         return !doc ? (
-            <i className="fa fa-spinner fa-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
-            <table className="table table-condensed">
+            <table className="w-full text-xs">
                 <tbody>
                     {doc.commands.map((cmd) => (
                         <tr
@@ -55,20 +56,26 @@ export default class FilterDocs extends Component<
                                     cmd[0].split(" ")[0] + " ",
                                 )
                             }
+                            className="hover:bg-muted/50 cursor-pointer"
                         >
-                            <td>{cmd[0].replace(" ", "\u00a0")}</td>
-                            <td>{cmd[1]}</td>
+                            <td className="py-0.5 pr-2 font-mono text-primary whitespace-nowrap">
+                                {cmd[0].replace(" ", "\u00a0")}
+                            </td>
+                            <td className="py-0.5 text-muted-foreground">
+                                {cmd[1]}
+                            </td>
                         </tr>
                     ))}
                     <tr key="docs-link">
-                        <td colSpan={2}>
+                        <td colSpan={2} className="pt-2">
                             <a
                                 href="https://mitmproxy.org/docs/latest/concepts-filters/"
                                 target="_blank"
                                 rel="noreferrer"
+                                className="inline-flex items-center gap-1 text-primary hover:underline"
                             >
-                                <i className="fa fa-external-link" />
-                                &nbsp; mitmproxy docs
+                                <ExternalLink className="h-3 w-3" />
+                                mitmproxy docs
                             </a>
                         </td>
                     </tr>

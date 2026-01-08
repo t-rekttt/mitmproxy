@@ -13,10 +13,31 @@ import {
     statusCode,
     getMethod,
     getVersion,
+    type FlowIconType,
 } from "../../flow/utils";
 import { formatSize, formatTimeDelta, formatTimeStamp } from "../../utils";
 import * as flowActions from "../../ducks/flows";
 import type { Flow } from "../../flow";
+import {
+    X,
+    AlertTriangle,
+    RefreshCw,
+    Pause,
+    Play,
+    FileText,
+    FileCode,
+    File,
+    Image,
+    FileCheck,
+    Forward,
+    Radio,
+    Network,
+    Wifi,
+    Globe,
+    Zap,
+    Braces,
+    Lock,
+} from "lucide-react";
 
 type FlowColumnProps = {
     flow: Flow;
@@ -28,16 +49,45 @@ interface FlowColumn {
     headerName: string; // Shown in the UI
 }
 
+function FlowIcon({ iconType }: { iconType: FlowIconType }) {
+    const iconClass = "h-4 w-4";
+    switch (iconType) {
+        case "css":
+            return <Braces className={classnames(iconClass, "text-purple-500")} />;
+        case "document":
+            return <FileText className={classnames(iconClass, "text-blue-500")} />;
+        case "js":
+            return <FileCode className={classnames(iconClass, "text-yellow-500")} />;
+        case "plain":
+            return <File className={classnames(iconClass, "text-muted-foreground")} />;
+        case "image":
+            return <Image className={classnames(iconClass, "text-green-500")} />;
+        case "not-modified":
+            return <FileCheck className={classnames(iconClass, "text-gray-400")} />;
+        case "redirect":
+            return <Forward className={classnames(iconClass, "text-orange-500")} />;
+        case "websocket":
+            return <Radio className={classnames(iconClass, "text-cyan-500")} />;
+        case "tcp":
+            return <Network className={classnames(iconClass, "text-blue-400")} />;
+        case "udp":
+            return <Wifi className={classnames(iconClass, "text-indigo-400")} />;
+        case "dns":
+            return <Globe className={classnames(iconClass, "text-teal-500")} />;
+        case "quic":
+            return <Zap className={classnames(iconClass, "text-amber-500")} />;
+        default:
+            return <File className={classnames(iconClass, "text-muted-foreground")} />;
+    }
+}
+
 export const tls: FlowColumn = ({ flow }) => {
     return (
-        <td
-            className={classnames(
-                "col-tls",
-                flow.client_conn.tls_established
-                    ? "col-tls-https"
-                    : "col-tls-http",
+        <td className="w-4 text-center">
+            {flow.client_conn.tls_established && (
+                <Lock className="h-3 w-3 text-green-500 inline-block" />
             )}
-        />
+        </td>
     );
 };
 tls.headerName = "";
@@ -46,14 +96,14 @@ export const index: FlowColumn = ({ flow }) => {
     const index = useAppSelector(
         (state) => state.flows._listIndex.get(flow.id)!,
     );
-    return <td className="col-index">{index + 1}</td>;
+    return <td className="w-12 text-right text-muted-foreground pr-2">{index + 1}</td>;
 };
 index.headerName = "#";
 
 export const icon: FlowColumn = ({ flow }) => {
     return (
-        <td className="col-icon">
-            <div className={classnames("resource-icon", getIcon(flow))} />
+        <td className="w-6 text-center">
+            <FlowIcon iconType={getIcon(flow)} />
         </td>
     );
 };
@@ -63,67 +113,69 @@ export const path: FlowColumn = ({ flow }) => {
     let err;
     if (flow.error) {
         if (flow.error.msg === "Connection killed.") {
-            err = <i className="fa fa-fw fa-times pull-right" />;
+            err = <X className="h-3 w-3 inline-block ml-1 text-destructive" />;
         } else {
-            err = <i className="fa fa-fw fa-exclamation pull-right" />;
+            err = <AlertTriangle className="h-3 w-3 inline-block ml-1 text-warning" />;
         }
     }
     return (
-        <td className="col-path">
-            {flow.is_replay === "request" && (
-                <i className="fa fa-fw fa-repeat pull-right" />
-            )}
-            {flow.intercepted && <i className="fa fa-fw fa-pause pull-right" />}
-            {err}
-            <span className="marker pull-right">{flow.marked}</span>
-            {mainPath(flow)}
+        <td className="max-w-xs truncate">
+            <span className="flex items-center gap-1">
+                {flow.marked && <span className="text-xs">{flow.marked}</span>}
+                {flow.is_replay === "request" && (
+                    <RefreshCw className="h-3 w-3 text-blue-500" />
+                )}
+                {flow.intercepted && <Pause className="h-3 w-3 text-orange-500" />}
+                {err}
+                <span className="truncate">{mainPath(flow)}</span>
+            </span>
         </td>
     );
 };
 path.headerName = "Path";
 
 export const method: FlowColumn = ({ flow }) => (
-    <td className="col-method">{getMethod(flow)}</td>
+    <td className="w-16 font-medium">{getMethod(flow)}</td>
 );
 method.headerName = "Method";
 
 export const version: FlowColumn = ({ flow }) => (
-    <td className="col-http-version">{getVersion(flow)}</td>
+    <td className="w-16 text-muted-foreground">{getVersion(flow)}</td>
 );
 version.headerName = "Version";
 
 export const status: FlowColumn = ({ flow }) => {
-    let color = "darkred";
+    let colorClass = "text-destructive";
 
     if ((flow.type !== "http" && flow.type != "dns") || !flow.response)
-        return <td className="col-status" />;
+        return <td className="w-12" />;
 
     if (100 <= flow.response.status_code && flow.response.status_code < 200) {
-        color = "green";
+        colorClass = "text-green-500";
     } else if (
         200 <= flow.response.status_code &&
         flow.response.status_code < 300
     ) {
-        color = "darkgreen";
+        colorClass = "text-green-600";
     } else if (
         300 <= flow.response.status_code &&
         flow.response.status_code < 400
     ) {
-        color = "lightblue";
+        colorClass = "text-blue-400";
     } else if (
         400 <= flow.response.status_code &&
         flow.response.status_code < 500
     ) {
-        color = "red";
+        colorClass = "text-red-500";
     } else if (
         500 <= flow.response.status_code &&
         flow.response.status_code < 600
     ) {
-        color = "red";
+        colorClass = "text-red-500";
     }
 
     return (
-        <td className="col-status" style={{ color: color }}>
+        <td className={classnames("w-12 font-medium", colorClass)}>
             {statusCode(flow)}
         </td>
     );
@@ -131,7 +183,7 @@ export const status: FlowColumn = ({ flow }) => {
 status.headerName = "Status";
 
 export const size: FlowColumn = ({ flow }) => {
-    return <td className="col-size">{formatSize(getTotalSize(flow))}</td>;
+    return <td className="w-16 text-right text-muted-foreground">{formatSize(getTotalSize(flow))}</td>;
 };
 size.headerName = "Size";
 
@@ -139,7 +191,7 @@ export const time: FlowColumn = ({ flow }) => {
     const start = startTime(flow);
     const end = endTime(flow);
     return (
-        <td className="col-time">
+        <td className="w-16 text-right text-muted-foreground">
             {start && end ? formatTimeDelta(1000 * (end - start)) : "..."}
         </td>
     );
@@ -149,7 +201,7 @@ time.headerName = "Time";
 export const timestamp: FlowColumn = ({ flow }) => {
     const start = startTime(flow);
     return (
-        <td className="col-timestamp">
+        <td className="w-24 text-muted-foreground text-xs">
             {start ? formatTimeStamp(start) : "..."}
         </td>
     );
@@ -164,26 +216,32 @@ export const quickactions: FlowColumn = ({ flow }) => {
         resume_or_replay = (
             <a
                 href="#"
-                className="quickaction"
-                onClick={() => dispatch(flowActions.resume([flow]))}
+                className="hover:opacity-80"
+                onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(flowActions.resume([flow]));
+                }}
             >
-                <i className="fa fa-fw fa-play text-success" />
+                <Play className="h-4 w-4 text-green-500" />
             </a>
         );
     } else if (canReplay(flow)) {
         resume_or_replay = (
             <a
                 href="#"
-                className="quickaction"
-                onClick={() => dispatch(flowActions.replay([flow]))}
+                className="hover:opacity-80"
+                onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(flowActions.replay([flow]));
+                }}
             >
-                <i className="fa fa-fw fa-repeat text-primary" />
+                <RefreshCw className="h-4 w-4 text-blue-500" />
             </a>
         );
     }
 
     return (
-        <td className="col-quickactions">
+        <td className="w-8 text-center" data-column="quickactions">
             {resume_or_replay ? <div>{resume_or_replay}</div> : <></>}
         </td>
     );
@@ -192,7 +250,7 @@ quickactions.headerName = "";
 
 export const comment: FlowColumn = ({ flow }) => {
     const text = flow.comment;
-    return <td className="col-comment">{text}</td>;
+    return <td className="max-w-xs truncate text-muted-foreground">{text}</td>;
 };
 comment.headerName = "Comment";
 

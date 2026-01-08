@@ -8,6 +8,7 @@ import ViewSelector from "../contentviews/ViewSelector";
 import { setContentViewFor } from "../../ducks/ui/flow";
 import { formatTimeStamp } from "../../utils";
 import ContentRenderer from "../contentviews/ContentRenderer";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 type MessagesPropTypes = {
     flow: Flow;
@@ -39,9 +40,9 @@ export default function Messages({ flow, messages_meta }: MessagesPropTypes) {
     let remainingLines = maxLines;
 
     return (
-        <div className="contentview">
-            <div className="controls">
-                <h5>{messages_meta.count} Messages</h5>
+        <div className="p-4 space-y-4">
+            <div className="flex items-center justify-between gap-4 pb-2 border-b border-border">
+                <h5 className="text-sm font-medium">{messages_meta.count} Messages</h5>
                 <ViewSelector
                     value={contentView}
                     onChange={(cv) =>
@@ -55,17 +56,16 @@ export default function Messages({ flow, messages_meta }: MessagesPropTypes) {
                 />
             </div>
             {messages.map((d: ContentViewData, i) => {
-                const className = `fa fa-fw fa-arrow-${
-                    d.from_client ? "right text-primary" : "left text-danger"
-                }`;
+                const ArrowIcon = d.from_client ? ArrowRight : ArrowLeft;
+                const iconClass = d.from_client ? "text-blue-500" : "text-red-500";
                 const renderer = (
-                    <div key={i}>
-                        <small>
-                            <i className={className} />
-                            <span className="pull-right">
+                    <div key={i} className="space-y-1">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <ArrowIcon className={`h-4 w-4 ${iconClass}`} />
+                            <span>
                                 {d.timestamp && formatTimeStamp(d.timestamp)}
                             </span>
-                        </small>
+                        </div>
                         <ContentRenderer
                             content={d.text}
                             maxLines={remainingLines}

@@ -20,6 +20,17 @@ import {
 import Dropdown, { MenuItem } from "../common/Dropdown";
 import { copy } from "../../flow/export";
 import type { Flow } from "../../flow";
+import {
+    RefreshCw,
+    Copy,
+    History,
+    Trash2,
+    Download,
+    Files,
+    Play,
+    X,
+    Paintbrush,
+} from "lucide-react";
 
 import type { JSX } from "react";
 
@@ -35,13 +46,13 @@ export default function FlowMenu(): JSX.Element {
 
     if (selectedFlows.length === 0) return <div />;
     return (
-        <div className="flow-menu">
+        <div className="flex gap-6 p-2">
             <HideInStatic>
-                <div className="menu-group">
-                    <div className="menu-content">
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
                         <Button
                             title="[r]eplay flow"
-                            icon="fa-repeat text-primary"
+                            icon={RefreshCw}
                             onClick={() => dispatch(replayFlows(selectedFlows))}
                             disabled={!selectedFlows.some(canReplay)}
                         >
@@ -49,7 +60,7 @@ export default function FlowMenu(): JSX.Element {
                         </Button>
                         <Button
                             title="[D]uplicate flow"
-                            icon="fa-copy text-info"
+                            icon={Copy}
                             onClick={() =>
                                 dispatch(duplicateFlows(selectedFlows))
                             }
@@ -59,14 +70,14 @@ export default function FlowMenu(): JSX.Element {
                         <Button
                             disabled={!selectedFlows.some(canRevert)}
                             title="revert changes to flow [V]"
-                            icon="fa-history text-warning"
+                            icon={History}
                             onClick={() => dispatch(revertFlows(selectedFlows))}
                         >
                             Revert
                         </Button>
                         <Button
                             title="[d]elete flow"
-                            icon="fa-trash text-danger"
+                            icon={Trash2}
                             onClick={() => {
                                 dispatch(removeFlows(selectedFlows));
                             }}
@@ -76,25 +87,25 @@ export default function FlowMenu(): JSX.Element {
 
                         <MarkButton flows={selectedFlows} />
                     </div>
-                    <div className="menu-legend">Flow Modification</div>
+                    <div className="text-xs text-muted-foreground">Flow Modification</div>
                 </div>
             </HideInStatic>
 
-            <div className="menu-group">
-                <div className="menu-content">
+            <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
                     <DownloadButton flow={flow} />
                     <ExportButton flow={flow} />
                 </div>
-                <div className="menu-legend">Export</div>
+                <div className="text-xs text-muted-foreground">Export</div>
             </div>
 
             <HideInStatic>
-                <div className="menu-group">
-                    <div className="menu-content">
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
                         <Button
                             disabled={!canResumeOrKillAny}
                             title="[a]ccept intercepted flow"
-                            icon="fa-play text-success"
+                            icon={Play}
                             onClick={() => dispatch(resumeFlows(selectedFlows))}
                         >
                             Resume
@@ -102,13 +113,13 @@ export default function FlowMenu(): JSX.Element {
                         <Button
                             disabled={!canResumeOrKillAny}
                             title="kill intercepted flow [x]"
-                            icon="fa-times text-danger"
+                            icon={X}
                             onClick={() => dispatch(killFlows(selectedFlows))}
                         >
                             Abort
                         </Button>
                     </div>
-                    <div className="menu-legend">Interception</div>
+                    <div className="text-xs text-muted-foreground">Interception</div>
                 </div>
             </HideInStatic>
         </div>
@@ -128,7 +139,7 @@ function DownloadButton({ flow }: { flow: Flow }) {
 
     if (flow.type !== "http")
         return (
-            <Button icon="fa-download" onClick={() => 0} disabled>
+            <Button icon={Download} onClick={() => 0} disabled>
                 Download
             </Button>
         );
@@ -136,7 +147,7 @@ function DownloadButton({ flow }: { flow: Flow }) {
     if (flow.request.contentLength && !flow.response?.contentLength) {
         return (
             <Button
-                icon="fa-download"
+                icon={Download}
                 onClick={() =>
                     openInNewTab(MessageUtils.getContentURL(flow, flow.request))
                 }
@@ -151,7 +162,7 @@ function DownloadButton({ flow }: { flow: Flow }) {
         if (!flow.request.contentLength && flow.response.contentLength) {
             return (
                 <Button
-                    icon="fa-download"
+                    icon={Download}
                     onClick={() =>
                         openInNewTab(MessageUtils.getContentURL(flow, response))
                     }
@@ -162,16 +173,20 @@ function DownloadButton({ flow }: { flow: Flow }) {
             );
         }
         if (flow.request.contentLength && flow.response.contentLength) {
+            if (!hasSingleFlowSelected) {
+                return (
+                    <Button icon={Download} onClick={() => {}} disabled>
+                        Download
+                    </Button>
+                );
+            }
             return (
                 <Dropdown
                     text={
-                        <Button
-                            icon="fa-download"
-                            onClick={() => 1}
-                            disabled={!hasSingleFlowSelected}
-                        >
-                            Download▾
-                        </Button>
+                        <span className="inline-flex items-center gap-1">
+                            <Download className="h-4 w-4" />
+                            Download
+                        </span>
                     }
                     options={{ placement: "bottom-start" }}
                 >
@@ -205,18 +220,27 @@ function ExportButton({ flow }: { flow: Flow }) {
     const hasSingleFlowSelected = useAppSelector(
         (state) => state.flows.selected.length === 1,
     );
+
+    if (flow.type !== "http" || !hasSingleFlowSelected) {
+        return (
+            <Button
+                title="Export flow."
+                icon={Files}
+                onClick={() => {}}
+                disabled
+            >
+                Export
+            </Button>
+        );
+    }
+
     return (
         <Dropdown
-            className=""
             text={
-                <Button
-                    title="Export flow."
-                    icon="fa-clone"
-                    onClick={() => 1}
-                    disabled={flow.type !== "http" || !hasSingleFlowSelected}
-                >
-                    Export▾
-                </Button>
+                <span className="inline-flex items-center gap-1">
+                    <Files className="h-4 w-4" />
+                    Export
+                </span>
             }
             options={{ placement: "bottom-start" }}
         >
@@ -251,15 +275,11 @@ function MarkButton({ flows }: { flows: Flow[] }) {
     const dispatch = useAppDispatch();
     return (
         <Dropdown
-            className=""
             text={
-                <Button
-                    title="mark flow"
-                    icon="fa-paint-brush text-success"
-                    onClick={() => 1}
-                >
-                    Mark▾
-                </Button>
+                <span className="inline-flex items-center gap-1">
+                    <Paintbrush className="h-4 w-4" />
+                    Mark
+                </span>
             }
             options={{ placement: "bottom-start" }}
         >

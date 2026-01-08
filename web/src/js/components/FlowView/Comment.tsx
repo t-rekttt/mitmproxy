@@ -8,10 +8,10 @@ export default function Comment({ flow }: { flow: Flow }) {
     const dispatch = useAppDispatch();
 
     return (
-        <section className="timing">
-            <h4>Comment</h4>
+        <section className="p-4 space-y-4">
+            <h4 className="text-sm font-semibold">Comment</h4>
             <ValueEditor
-                className="kv-value"
+                className="flex-1 text-muted-foreground"
                 content={flow.comment}
                 onEditDone={(comment) => {
                     dispatch(flowActions.update(flow, { comment }));

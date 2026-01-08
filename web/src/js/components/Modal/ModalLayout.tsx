@@ -1,24 +1,22 @@
 import * as React from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type ModalLayoutProps = {
     children: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 };
 
-export default function ModalLayout({ children }: ModalLayoutProps) {
+export default function ModalLayout({
+    children,
+    open = true,
+    onOpenChange,
+}: ModalLayoutProps) {
     return (
-        <div>
-            <div className="modal-backdrop fade in"></div>
-            <div
-                className="modal modal-visible"
-                id="optionsModal"
-                tabIndex={-1}
-                role="dialog"
-                aria-labelledby="options"
-            >
-                <div className="modal-dialog modal-lg" role="document">
-                    <div className="modal-content">{children}</div>
-                </div>
-            </div>
-        </div>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-4xl h-[85vh] overflow-hidden flex flex-col">
+                {children}
+            </DialogContent>
+        </Dialog>
     );
 }

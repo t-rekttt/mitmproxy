@@ -14,6 +14,7 @@ import CodeEditor from "./CodeEditor";
 import ContentRenderer from "./ContentRenderer";
 import ViewSelector from "./ViewSelector";
 import { copyViewContentDataToClipboard, fetchApi } from "../../utils";
+import { Check, X, Pencil, Clipboard, Upload } from "lucide-react";
 
 type HttpMessageProps = {
     flow: HTTPFlow;
@@ -64,24 +65,25 @@ function HttpMessageEdit({ flow, message, stopEdit }: HttpMessageEditProps) {
         stopEdit();
     };
     return (
-        <div className="contentview" key="edit">
-            <div className="controls">
-                <h5>[Editing]</h5>
-                <Button
-                    onClick={save}
-                    icon="fa-check text-success"
-                    className="btn-xs"
-                >
-                    Done
-                </Button>
-                &nbsp;
-                <Button
-                    onClick={() => stopEdit()}
-                    icon="fa-times text-danger"
-                    className="btn-xs"
-                >
-                    Cancel
-                </Button>
+        <div className="p-4 space-y-4" key="edit">
+            <div className="flex items-center justify-between gap-4 pb-2 border-b border-border">
+                <h5 className="text-sm font-medium">[Editing]</h5>
+                <div className="flex items-center gap-2">
+                    <Button
+                        onClick={save}
+                        icon={Check}
+                        className=""
+                    >
+                        Done
+                    </Button>
+                    <Button
+                        onClick={() => stopEdit()}
+                        icon={X}
+                        className=""
+                    >
+                        Cancel
+                    </Button>
+                </div>
             </div>
             <CodeEditor
                 initialContent={content || ""}
@@ -131,38 +133,36 @@ function HttpMessageView({ flow, message, startEdit }: HttpMessageViewProps) {
     }
 
     return (
-        <div className="contentview" key="view">
-            <div className="controls">
-                <h5>{desc}</h5>
-                {contentViewData && contentViewData?.text.length > 0 && (
-                    <CopyButton flow={flow} message={message} />
-                )}
-                &nbsp;
-                <Button onClick={startEdit} icon="fa-edit" className="btn-xs">
-                    Edit
-                </Button>
-                &nbsp;
-                <FileChooser
-                    icon="fa-upload"
-                    text="Replace"
-                    title="Upload a file to replace the content."
-                    onOpenFile={(content) =>
-                        dispatch(uploadContent(flow, content, part))
-                    }
-                    className="btn btn-default btn-xs"
-                />
-                &nbsp;
-                <ViewSelector
-                    value={contentView}
-                    onChange={(cv) =>
-                        dispatch(
-                            setContentViewFor({
-                                messageId: flow.id + part,
-                                contentView: cv,
-                            }),
-                        )
-                    }
-                />
+        <div className="p-4 space-y-4" key="view">
+            <div className="flex items-center justify-between gap-4 pb-2 border-b border-border">
+                <h5 className="text-sm font-medium">{desc}</h5>
+                <div className="flex items-center gap-2">
+                    {contentViewData && contentViewData?.text.length > 0 && (
+                        <CopyButton flow={flow} message={message} />
+                    )}
+                    <Button onClick={startEdit} icon={Pencil} className="">
+                        Edit
+                    </Button>
+                    <FileChooser
+                        icon={<Upload className="h-4 w-4 mr-2" />}
+                        text="Replace"
+                        title="Upload a file to replace the content."
+                        onOpenFile={(content) =>
+                            dispatch(uploadContent(flow, content, part))
+                        }
+                    />
+                    <ViewSelector
+                        value={contentView}
+                        onChange={(cv) =>
+                            dispatch(
+                                setContentViewFor({
+                                    messageId: flow.id + part,
+                                    contentView: cv,
+                                }),
+                            )
+                        }
+                    />
+                </div>
             </div>
             {ViewImage.matches(message) && (
                 <ViewImage flow={flow} message={message} />
@@ -218,8 +218,8 @@ function CopyButton({ flow, message }: CopyButtonProps) {
     return (
         <Button
             onClick={handleClickCopyButton}
-            icon="fa-clipboard"
-            className="btn-xs"
+            icon={Clipboard}
+            className=""
             disabled={isFetchingFullContent}
         >
             {isCopied ? "Copied!" : "Copy"}
@@ -239,11 +239,11 @@ type ViewImageProps = {
 
 export function ViewImage({ flow, message }: ViewImageProps) {
     return (
-        <div className="flowview-image">
+        <div className="flex justify-center p-4">
             <img
                 src={MessageUtils.getContentURL(flow, message)}
                 alt="preview"
-                className="img-thumbnail"
+                className="max-w-full h-auto rounded border border-border"
             />
         </div>
     );

@@ -1,22 +1,28 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { connect, shallowEqual } from "react-redux";
-import * as modalAction from "../../ducks/ui/modal";
 import type { Option } from "../../ducks/options";
 import { compact, isEmpty } from "lodash";
 import type { RootState } from "../../ducks";
-import { useAppDispatch, useAppSelector } from "../../ducks";
+import { useAppSelector } from "../../ducks";
 import OptionInput from "./OptionInput";
+import {
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 function OptionHelp({ name }: { name: Option }) {
     const help = useAppSelector((state) => state.options_meta[name]?.help);
-    return <div className="help-block small">{help}</div>;
+    return <div className="text-xs text-muted-foreground mt-1">{help}</div>;
 }
 
 function OptionError({ name }) {
     const error = useAppSelector((state) => state.options_meta[name]?.error);
     if (!error) return null;
-    return <div className="small text-danger">{error}</div>;
+    return <div className="text-xs text-destructive mt-1">{error}</div>;
 }
 
 export function PureOptionDefault({ value, defaultVal }) {
@@ -39,8 +45,8 @@ export function PureOptionDefault({ value, defaultVal }) {
             defaultVal = "null";
         }
         return (
-            <div className="small">
-                Default: <strong> {defaultVal} </strong>{" "}
+            <div className="text-xs text-muted-foreground mt-1">
+                Default: <strong>{defaultVal}</strong>
             </div>
         );
     }
@@ -54,37 +60,40 @@ const OptionDefault = connect(
 )(PureOptionDefault);
 
 export default function OptionModal() {
-    const dispatch = useAppDispatch();
     const options = useAppSelector(
         (state) => Object.keys(state.options_meta),
         shallowEqual,
     ).sort() as Option[];
 
     return (
-        <div>
-            <div className="modal-header">
-                <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    onClick={() => dispatch(modalAction.hideModal())}
-                >
-                    <i className="fa fa-fw fa-times"></i>
-                </button>
-                <div className="modal-title">
-                    <h4>Options</h4>
-                </div>
-            </div>
+        <>
+            <DialogHeader className="flex-shrink-0">
+                <DialogTitle>Options</DialogTitle>
+                <DialogDescription>
+                    Configure mitmproxy settings
+                </DialogDescription>
+            </DialogHeader>
 
-            <div className="modal-body">
-                <div className="form-horizontal">
+            <ScrollArea className="flex-1 min-h-0">
+                <div className="space-y-4 py-4 pr-4">
                     {options.map((name) => (
-                        <div key={name} className="form-group">
-                            <div className="col-xs-6">
-                                <label htmlFor={name}>{name}</label>
+                        <div
+                            key={name}
+                            className={cn(
+                                "grid grid-cols-2 gap-4 py-3",
+                                "border-b border-border/50 last:border-0",
+                            )}
+                        >
+                            <div>
+                                <label
+                                    htmlFor={name}
+                                    className="text-sm font-medium"
+                                >
+                                    {name}
+                                </label>
                                 <OptionHelp name={name} />
                             </div>
-                            <div className="col-xs-6">
+                            <div>
                                 <OptionInput name={name} />
                                 <OptionError name={name} />
                                 <OptionDefault name={name} />
@@ -92,9 +101,7 @@ export default function OptionModal() {
                         </div>
                     ))}
                 </div>
-            </div>
-
-            <div className="modal-footer"></div>
-        </div>
+            </ScrollArea>
+        </>
     );
 }

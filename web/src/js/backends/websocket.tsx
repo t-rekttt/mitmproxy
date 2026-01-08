@@ -59,11 +59,18 @@ export default class WebsocketBackend {
     }
 
     connect() {
-        this.socket = new WebSocket(
-            location.origin.replace("http", "ws") +
-                location.pathname.replace(/\/$/, "") +
-                "/updates",
-        );
+        // Allow configuring backend URL via environment variable for development
+        const backendUrl = import.meta.env.VITE_MITMPROXY_BACKEND_URL;
+        const wsUrl = backendUrl
+            ? backendUrl.replace("http", "ws") + "/updates"
+            : location.origin.replace("http", "ws") +
+              location.pathname.replace(/\/$/, "") +
+              "/updates";
+        // Add token from URL query param if present, or use env token for dev
+        const urlParams = new URLSearchParams(location.search);
+        const token = urlParams.get("token") || import.meta.env.VITE_MITMPROXY_TOKEN;
+        const wsUrlWithAuth = token ? `${wsUrl}?token=${token}` : wsUrl;
+        this.socket = new WebSocket(wsUrlWithAuth);
         this.socket.addEventListener("open", () => this.onOpen());
         this.socket.addEventListener("close", (event) => this.onClose(event));
         this.socket.addEventListener("message", (msg) =>

@@ -8,6 +8,9 @@ import { ServerStatus } from "./CaptureSetup";
 import type { ServerInfo } from "../../ducks/backendState";
 import LocalDropdown from "./LocalDropdown";
 import { fetchProcesses } from "../../ducks/processes";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { X, RefreshCw } from "lucide-react";
 
 export default function Local() {
     const serverState = useAppSelector((state) => state.modes.local);
@@ -24,9 +27,9 @@ export default function Local() {
     });
 
     return (
-        <div>
-            <h4 className="mode-title">Local Applications</h4>
-            <p className="mode-description">
+        <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Local Applications</h4>
+            <p className="text-xs text-muted-foreground">
                 Transparently Intercept local application(s).
             </p>
             {servers}
@@ -68,7 +71,7 @@ function LocalRow({
     };
 
     return (
-        <div className="mode-local">
+        <div>
             <ModeToggle
                 value={server.active}
                 label="Intercept traffic for"
@@ -76,29 +79,37 @@ function LocalRow({
                     dispatch(setActive({ server, value: !server.active }))
                 }
             >
-                <div className="processes-container">
-                    <div className="selected-processes">
+                <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex flex-wrap gap-1">
                         {server.selectedProcesses
                             ?.split(/,\s*/)
                             .filter((p) => p.trim() !== "")
                             .map((p) => (
-                                <div key={p} className="selected-process">
+                                <Badge
+                                    key={p}
+                                    variant="secondary"
+                                    className="gap-1 pr-1"
+                                >
                                     {p}
-                                    <i
-                                        className="fa fa-times"
-                                        aria-hidden="true"
+                                    <button
+                                        className="ml-1 hover:text-destructive"
                                         onClick={() => handleDeletionProcess(p)}
-                                    ></i>
-                                </div>
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                </Badge>
                             ))}
                     </div>
-                    <div className="dropdown-container">
+                    <div className="flex items-center gap-2">
                         <LocalDropdown server={server} />
-                        <i
-                            className="fa fa-refresh"
-                            aria-hidden="true"
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
                             onClick={() => dispatch(fetchProcesses())}
-                        ></i>
+                        >
+                            <RefreshCw className="h-4 w-4" />
+                        </Button>
                     </div>
                 </div>
             </ModeToggle>

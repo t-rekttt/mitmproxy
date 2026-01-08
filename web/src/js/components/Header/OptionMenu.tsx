@@ -5,6 +5,7 @@ import DocsLink from "../common/DocsLink";
 import HideInStatic from "../common/HideInStatic";
 import * as modalActions from "../../ducks/ui/modal";
 import { useAppDispatch } from "../../ducks";
+import { Settings } from "lucide-react";
 
 OptionMenu.title = "Options";
 
@@ -13,23 +14,23 @@ export default function OptionMenu() {
     const openOptions = () => modalActions.setActiveModal("OptionModal");
 
     return (
-        <div>
+        <div className="flex gap-6 p-2">
             <HideInStatic>
-                <div className="menu-group">
-                    <div className="menu-content">
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
                         <Button
                             title="Open Options"
-                            icon="fa-cogs text-primary"
+                            icon={Settings}
                             onClick={() => dispatch(openOptions())}
                         >
                             Edit Options <sup>alpha</sup>
                         </Button>
                     </div>
-                    <div className="menu-legend">Options Editor</div>
+                    <div className="text-xs text-muted-foreground">Options Editor</div>
                 </div>
 
-                <div className="menu-group">
-                    <div className="menu-content">
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1">
                         <OptionsToggle name="anticache">
                             Strip cache headers{" "}
                             <DocsLink resource="overview/features/#anticache" />
@@ -43,16 +44,16 @@ export default function OptionMenu() {
                             <DocsLink resource="concepts/options/#ssl_insecure" />
                         </OptionsToggle>
                     </div>
-                    <div className="menu-legend">Quick Options</div>
+                    <div className="text-xs text-muted-foreground">Quick Options</div>
                 </div>
             </HideInStatic>
 
-            <div className="menu-group">
-                <div className="menu-content">
+            <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
                     <EventlogToggle />
                     <CommandBarToggle />
                 </div>
-                <div className="menu-legend">View Options</div>
+                <div className="text-xs text-muted-foreground">View Options</div>
             </div>
         </div>
     );

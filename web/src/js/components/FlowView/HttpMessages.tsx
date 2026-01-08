@@ -23,44 +23,40 @@ function RequestLine({ flow }: RequestLineProps) {
     const dispatch = useAppDispatch();
 
     return (
-        <div className="first-line request-line">
-            <div>
-                <ValidateEditor
-                    content={flow.request.method}
-                    onEditDone={(method) =>
-                        dispatch(
-                            flowActions.update(flow, { request: { method } }),
-                        )
-                    }
-                    isValid={(method) => method.length > 0}
-                    selectAllOnClick={true}
-                />
-                &nbsp;
-                <ValidateEditor
-                    content={RequestUtils.pretty_url(flow.request)}
-                    onEditDone={(url) =>
-                        dispatch(
-                            flowActions.update(flow, {
-                                request: { path: "", ...parseUrl(url) },
-                            }),
-                        )
-                    }
-                    isValid={(url) => !!parseUrl(url)?.host}
-                />
-                &nbsp;
-                <ValidateEditor
-                    content={flow.request.http_version}
-                    onEditDone={(http_version) =>
-                        dispatch(
-                            flowActions.update(flow, {
-                                request: { http_version },
-                            }),
-                        )
-                    }
-                    isValid={isValidHttpVersion}
-                    selectAllOnClick={true}
-                />
-            </div>
+        <div className="flex items-center gap-1 px-4 py-2 font-mono text-sm bg-muted/30 border-b border-border">
+            <ValidateEditor
+                content={flow.request.method}
+                onEditDone={(method) =>
+                    dispatch(
+                        flowActions.update(flow, { request: { method } }),
+                    )
+                }
+                isValid={(method) => method.length > 0}
+                selectAllOnClick={true}
+            />
+            <ValidateEditor
+                content={RequestUtils.pretty_url(flow.request)}
+                onEditDone={(url) =>
+                    dispatch(
+                        flowActions.update(flow, {
+                            request: { path: "", ...parseUrl(url) },
+                        }),
+                    )
+                }
+                isValid={(url) => !!parseUrl(url)?.host}
+            />
+            <ValidateEditor
+                content={flow.request.http_version}
+                onEditDone={(http_version) =>
+                    dispatch(
+                        flowActions.update(flow, {
+                            request: { http_version },
+                        }),
+                    )
+                }
+                isValid={isValidHttpVersion}
+                selectAllOnClick={true}
+            />
         </div>
     );
 }
@@ -73,7 +69,7 @@ function ResponseLine({ flow }: ResponseLineProps) {
     const dispatch = useAppDispatch();
 
     return (
-        <div className="first-line response-line">
+        <div className="flex items-center gap-1 px-4 py-2 font-mono text-sm bg-muted/30 border-b border-border">
             <ValidateEditor
                 content={flow.response.http_version}
                 onEditDone={(nextVer) =>
@@ -86,7 +82,6 @@ function ResponseLine({ flow }: ResponseLineProps) {
                 isValid={isValidHttpVersion}
                 selectAllOnClick={true}
             />
-            &nbsp;
             <ValidateEditor
                 content={flow.response.status_code + ""}
                 onEditDone={(code) =>
@@ -100,18 +95,15 @@ function ResponseLine({ flow }: ResponseLineProps) {
                 selectAllOnClick={true}
             />
             {flow.response.http_version !== "HTTP/2.0" && (
-                <>
-                    &nbsp;
-                    <ValueEditor
-                        content={flow.response.reason}
-                        onEditDone={(msg) =>
-                            dispatch(
-                                flowActions.update(flow, { response: { msg } }),
-                            )
-                        }
-                        selectAllOnClick={true}
-                    />
-                </>
+                <ValueEditor
+                    content={flow.response.reason}
+                    onEditDone={(msg) =>
+                        dispatch(
+                            flowActions.update(flow, { response: { msg } }),
+                        )
+                    }
+                    selectAllOnClick={true}
+                />
             )}
         </div>
     );
@@ -128,7 +120,7 @@ function Headers({ flow, message }: HeadersProps) {
 
     return (
         <KeyValueListEditor
-            className="headers"
+            className="px-4 py-2"
             data={message.headers}
             onChange={(headers) =>
                 dispatch(flowActions.update(flow, { [part]: { headers } }))
@@ -150,17 +142,16 @@ function Trailers({ flow, message }: TrailersProps) {
     if (!hasTrailers) return null;
 
     return (
-        <>
-            <hr />
-            <h5>HTTP Trailers</h5>
+        <div className="border-t border-border">
+            <h5 className="px-4 py-2 text-sm font-medium text-muted-foreground">HTTP Trailers</h5>
             <KeyValueListEditor
-                className="trailers"
+                className="px-4 py-2"
                 data={message.trailers}
                 onChange={(trailers) =>
                     dispatch(flowActions.update(flow, { [part]: { trailers } }))
                 }
             />
-        </>
+        </div>
     );
 }
 
@@ -175,10 +166,9 @@ const Message = React.memo(function Message({
     const FirstLine = flow.request === message ? RequestLine : ResponseLine;
 
     return (
-        <section className={part}>
+        <section className="divide-y divide-border">
             <FirstLine flow={flow} />
             <Headers flow={flow} message={message} />
-            <hr />
             <HttpMessage key={flow.id + part} flow={flow} message={message} />
             <Trailers flow={flow} message={message} />
         </section>

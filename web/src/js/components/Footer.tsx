@@ -2,6 +2,8 @@ import * as React from "react";
 import { formatSize } from "../utils";
 import HideInStatic from "../components/common/HideInStatic";
 import { useAppSelector } from "../ducks";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function Footer() {
     const version = useAppSelector((state) => state.backendState.version);
@@ -25,60 +27,99 @@ export default function Footer() {
     } = useAppSelector((state) => state.options);
 
     return (
-        <footer>
-            {mode && (mode.length !== 1 || mode[0] !== "regular") && (
-                <span className="label label-success">{mode.join(",")}</span>
+        <footer
+            className={cn(
+                "flex-shrink-0 flex items-center justify-between",
+                "px-2 py-1.5 border-t border-border bg-card",
+                "text-xs",
             )}
-            {intercept && (
-                <span className="label label-success">
-                    Intercept: {intercept}
-                </span>
-            )}
-            {ssl_insecure && (
-                <span className="label label-danger">ssl_insecure</span>
-            )}
-            {showhost && <span className="label label-success">showhost</span>}
-            {!upstream_cert && (
-                <span className="label label-success">no-upstream-cert</span>
-            )}
-            {!rawtcp && <span className="label label-success">no-raw-tcp</span>}
-            {!http2 && <span className="label label-success">no-http2</span>}
-            {!websocket && (
-                <span className="label label-success">no-websocket</span>
-            )}
-            {anticache && (
-                <span className="label label-success">anticache</span>
-            )}
-            {anticomp && <span className="label label-success">anticomp</span>}
-            {stickyauth && (
-                <span className="label label-success">
-                    stickyauth: {stickyauth}
-                </span>
-            )}
-            {stickycookie && (
-                <span className="label label-success">
-                    stickycookie: {stickycookie}
-                </span>
-            )}
-            {stream_large_bodies && (
-                <span className="label label-success">
-                    stream: {formatSize(stream_large_bodies)}
-                </span>
-            )}
-            <div className="pull-right">
+        >
+            <div className="flex items-center gap-1.5 flex-wrap">
+                {mode && (mode.length !== 1 || mode[0] !== "regular") && (
+                    <Badge variant="success" className="text-xs">
+                        {mode.join(",")}
+                    </Badge>
+                )}
+                {intercept && (
+                    <Badge variant="success" className="text-xs">
+                        Intercept: {intercept}
+                    </Badge>
+                )}
+                {ssl_insecure && (
+                    <Badge variant="destructive" className="text-xs">
+                        ssl_insecure
+                    </Badge>
+                )}
+                {showhost && (
+                    <Badge variant="success" className="text-xs">
+                        showhost
+                    </Badge>
+                )}
+                {!upstream_cert && (
+                    <Badge variant="success" className="text-xs">
+                        no-upstream-cert
+                    </Badge>
+                )}
+                {!rawtcp && (
+                    <Badge variant="success" className="text-xs">
+                        no-raw-tcp
+                    </Badge>
+                )}
+                {!http2 && (
+                    <Badge variant="success" className="text-xs">
+                        no-http2
+                    </Badge>
+                )}
+                {!websocket && (
+                    <Badge variant="success" className="text-xs">
+                        no-websocket
+                    </Badge>
+                )}
+                {anticache && (
+                    <Badge variant="success" className="text-xs">
+                        anticache
+                    </Badge>
+                )}
+                {anticomp && (
+                    <Badge variant="success" className="text-xs">
+                        anticomp
+                    </Badge>
+                )}
+                {stickyauth && (
+                    <Badge variant="success" className="text-xs">
+                        stickyauth: {stickyauth}
+                    </Badge>
+                )}
+                {stickycookie && (
+                    <Badge variant="success" className="text-xs">
+                        stickycookie: {stickycookie}
+                    </Badge>
+                )}
+                {stream_large_bodies && (
+                    <Badge variant="success" className="text-xs">
+                        stream: {formatSize(stream_large_bodies)}
+                    </Badge>
+                )}
+            </div>
+            <div className="flex items-center gap-1.5">
                 <HideInStatic>
                     {server && (
-                        <span
-                            className="label label-primary"
+                        <Badge
+                            variant="info"
+                            className="text-xs"
                             title="HTTP Proxy Server Address"
                         >
                             {listen_host || "*"}:{listen_port || 8080}
-                        </span>
+                        </Badge>
                     )}
                 </HideInStatic>
-                <span className="label label-default" title="Mitmproxy Version">
+                <Badge
+                    variant="secondary"
+                    className="text-xs"
+                    title="Mitmproxy Version"
+                >
                     mitmproxy {version}
-                </span>
+                </Badge>
             </div>
         </footer>
     );

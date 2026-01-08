@@ -1,4 +1,5 @@
 import * as React from "react";
+import { AlertTriangle } from "lucide-react";
 
 interface MissingModeProps {
     title: string;
@@ -7,15 +8,12 @@ interface MissingModeProps {
 
 export default function MissingMode({ title, description }: MissingModeProps) {
     return (
-        <div className="missing-mode-container">
-            <div className="title-icon-container">
-                <h4 className="mode-title">{title}</h4>
-                <i
-                    className="fa fa-exclamation-triangle"
-                    aria-hidden="true"
-                ></i>
+        <div className="space-y-2 opacity-60">
+            <div className="flex items-center gap-2">
+                <h4 className="text-sm font-semibold">{title}</h4>
+                <AlertTriangle className="h-4 w-4 text-warning" />
             </div>
-            <p className="mode-description">{description}</p>
+            <p className="text-xs text-muted-foreground">{description}</p>
         </div>
     );
 }

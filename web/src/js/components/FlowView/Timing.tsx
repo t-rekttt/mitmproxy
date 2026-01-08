@@ -11,11 +11,11 @@ export type TimeStampProps = {
 export function TimeStamp({ t, deltaTo, title }: TimeStampProps) {
     return t ? (
         <tr>
-            <td>{title}:</td>
-            <td>
+            <td className="py-1 pr-4 text-muted-foreground">{title}:</td>
+            <td className="py-1">
                 {formatTimeStamp(t)}
                 {deltaTo && (
-                    <span className="text-muted">
+                    <span className="text-muted-foreground ml-1">
                         ({formatTimeDelta(1000 * (t - deltaTo))})
                     </span>
                 )}
@@ -98,9 +98,9 @@ export default function Timing({ flow }: { flow: Flow }) {
     }
 
     return (
-        <section className="timing">
-            <h4>Timing</h4>
-            <table className="timing-table">
+        <section className="p-4 space-y-4">
+            <h4 className="text-sm font-semibold">Timing</h4>
+            <table className="w-full text-sm">
                 <tbody>
                     {timestamps
                         .filter((v): v is TimeStampProps => !!v.t)

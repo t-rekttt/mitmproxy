@@ -25,7 +25,13 @@ export default class ValueEditor extends Component<ValueEditorProps> {
     input = React.createRef<HTMLSpanElement>();
 
     render() {
-        const className = classnames("inline-input", this.props.className);
+        const className = classnames(
+            "inline-block min-w-[1em] px-1 py-0.5 rounded border border-transparent",
+            "hover:bg-muted/50 hover:border-border",
+            "focus:outline-none focus:bg-muted/50 focus:border-border focus:shadow-sm",
+            "empty:before:content-[attr(placeholder)] empty:before:text-muted-foreground empty:before:italic",
+            this.props.className
+        );
 
         return (
             <span

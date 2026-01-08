@@ -21,7 +21,7 @@ export default function ValidateEditor(props: ValidateEditorProps) {
 
     const className = classnames(
         props.className,
-        isValid ? "has-success" : "has-warning",
+        isValid ? "text-foreground" : "text-red-400",
     );
     return (
         <ValueEditor

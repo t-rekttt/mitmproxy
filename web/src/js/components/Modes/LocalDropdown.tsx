@@ -2,10 +2,20 @@ import * as React from "react";
 import type { LocalState } from "../../modes/local";
 import { useAppDispatch, useAppSelector } from "../../ducks";
 import { setSelectedProcesses } from "../../ducks/modes/local";
-import { Popover } from "./Popover";
 import type { Process } from "../../ducks/processes";
 import { fetchProcesses } from "../../ducks/processes";
 import { rpartition } from "../../utils";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChevronDown, Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 interface LocalDropdownProps {
     server: LocalState;
@@ -25,6 +35,7 @@ export default function LocalDropdown({ server }: LocalDropdownProps) {
     );
 
     const [currentSearch, setCurrentSearch] = React.useState("");
+    const [open, setOpen] = React.useState(false);
 
     const dispatch = useAppDispatch();
 
@@ -35,12 +46,10 @@ export default function LocalDropdown({ server }: LocalDropdownProps) {
     };
 
     const extractProcessName = (process: Process) => {
-        // we cannot use directly the display_name because it is exposed by every executable and it might lead to unexpected results
         const separator = platform.startsWith("win32") ? "\\" : "/";
         return rpartition(process.executable, separator)[1];
     };
 
-    // This function can take a Process in the case of the dropdown list or a string in the case of the input field when we want to add a process which is not in the list
     const addProcessToSelection = (option: Process | string) => {
         const processName =
             typeof option === "string" ? option : extractProcessName(option);
@@ -99,97 +108,102 @@ export default function LocalDropdown({ server }: LocalDropdownProps) {
         }
     };
 
-    const [isPopoverVisible, setPopoverVisible] = React.useState(false);
-
     return (
-        <div className="local-dropdown">
-            <div className="dropdown-header">
-                <input
-                    type="text"
-                    className="autocomplete-input"
-                    placeholder={
-                        selectedProcesses && selectedProcesses?.length > 0
-                            ? "Add more"
-                            : "all applications"
-                    }
-                    value={currentSearch}
-                    onChange={handleInputChange}
-                    onKeyDown={handleInputKeyDown}
-                    onClick={() => setPopoverVisible(true)}
-                    onBlur={() => setPopoverVisible(false)}
-                />
-                <Popover
-                    iconClass="fa fa-chevron-down"
-                    classname="local-popover"
-                    isVisible={isPopoverVisible}
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 gap-1 justify-between min-w-[150px]"
                 >
-                    <h4>Current Applications running on machine</h4>
+                    <span className="text-xs truncate">
+                        {selectedProcesses && selectedProcesses.length > 0
+                            ? "Add more..."
+                            : "All applications"}
+                    </span>
+                    <ChevronDown className="h-3 w-3 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-72 p-0" align="start">
+                <div className="p-2 border-b border-border">
+                    <Input
+                        type="text"
+                        placeholder="Search applications..."
+                        value={currentSearch}
+                        onChange={handleInputChange}
+                        onKeyDown={handleInputKeyDown}
+                        className="h-8"
+                    />
+                </div>
+                <div className="p-2">
+                    <h4 className="text-xs font-medium text-muted-foreground mb-2">
+                        Running Applications
+                    </h4>
                     {isLoading ? (
-                        <i className="fa fa-spinner" aria-hidden="true"></i>
+                        <div className="flex items-center justify-center py-4">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        </div>
                     ) : filteredProcesses.length > 0 ? (
-                        <ul className="dropdown-list">
-                            <li
-                                className={`dropdown-item ${selectedProcesses === "" ? "selected" : ""}`}
-                                onClick={() => {
-                                    dispatch(
-                                        setSelectedProcesses({
-                                            server,
-                                            value: "",
-                                        }),
-                                    );
-                                }}
-                                role="menuitem"
-                            >
-                                <div className="process-details">
-                                    <div className="process-icon" />
-                                    <span className="process-name">
-                                        All applications
-                                    </span>
-                                </div>
-                                {selectedProcesses === "" && (
-                                    <i
-                                        className="fa fa-check"
-                                        aria-hidden="true"
-                                    />
-                                )}
-                            </li>
-                            <hr className="process-separator" />
-                            {filteredProcesses.map((option, index) => (
-                                <li
-                                    key={index}
-                                    className={`dropdown-item ${isSelected(option) ? "selected" : ""}`}
-                                    onClick={() =>
-                                        handleApplicationClick(option)
-                                    }
-                                    role="menuitem"
-                                >
-                                    <div className="process-details">
-                                        <img
-                                            className="process-icon"
-                                            src={`./executable-icon?path=${option.executable}`}
-                                            loading="lazy"
-                                        />
-                                        <span className="process-name">
-                                            {extractProcessName(option)}
-                                        </span>
-                                    </div>
-                                    {isSelected(option) && (
-                                        <i
-                                            className="fa fa-check"
-                                            aria-hidden="true"
-                                        />
+                        <ScrollArea className="h-[200px]">
+                            <div className="space-y-1">
+                                <button
+                                    className={cn(
+                                        "w-full flex items-center justify-between px-2 py-1.5 rounded text-sm",
+                                        "hover:bg-accent cursor-pointer",
+                                        selectedProcesses === "" && "bg-accent",
                                     )}
-                                </li>
-                            ))}
-                        </ul>
+                                    onClick={() => {
+                                        dispatch(
+                                            setSelectedProcesses({
+                                                server,
+                                                value: "",
+                                            }),
+                                        );
+                                    }}
+                                >
+                                    <span>All applications</span>
+                                    {selectedProcesses === "" && (
+                                        <Check className="h-4 w-4" />
+                                    )}
+                                </button>
+                                <Separator className="my-1" />
+                                {filteredProcesses.map((option, index) => (
+                                    <button
+                                        key={index}
+                                        className={cn(
+                                            "w-full flex items-center justify-between px-2 py-1.5 rounded text-sm",
+                                            "hover:bg-accent cursor-pointer",
+                                            isSelected(option) && "bg-accent",
+                                        )}
+                                        onClick={() =>
+                                            handleApplicationClick(option)
+                                        }
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <img
+                                                className="h-4 w-4"
+                                                src={`./executable-icon?path=${option.executable}`}
+                                                loading="lazy"
+                                            />
+                                            <span className="truncate">
+                                                {extractProcessName(option)}
+                                            </span>
+                                        </div>
+                                        {isSelected(option) && (
+                                            <Check className="h-4 w-4 flex-shrink-0" />
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </ScrollArea>
                     ) : (
-                        <span>
+                        <p className="text-xs text-muted-foreground py-2">
                             Press <strong>Enter</strong> to capture traffic for
                             programs matching: <strong>{currentSearch}</strong>
-                        </span>
+                        </p>
                     )}
-                </Popover>
-            </div>
-        </div>
+                </div>
+            </PopoverContent>
+        </Popover>
     );
 }

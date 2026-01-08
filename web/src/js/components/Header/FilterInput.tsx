@@ -2,12 +2,19 @@ import React, { Component } from "react";
 import classnames from "classnames";
 import Filt from "../../filt/filt";
 import FilterDocs from "./FilterDocs";
+import { Search, Tag, Pause, type LucideIcon } from "lucide-react";
 
 export enum FilterIcon {
     SEARCH = "search",
     HIGHLIGHT = "tag",
     INTERCEPT = "pause",
 }
+
+const iconMap: Record<FilterIcon, LucideIcon> = {
+    [FilterIcon.SEARCH]: Search,
+    [FilterIcon.HIGHLIGHT]: Tag,
+    [FilterIcon.INTERCEPT]: Pause,
+};
 
 type FilterInputProps = {
     icon: FilterIcon;
@@ -132,20 +139,21 @@ export default class FilterInput extends Component<
     render() {
         const { icon, color, placeholder } = this.props;
         const { value, focus, mousefocus } = this.state;
+        const IconComponent = iconMap[icon];
         return (
             <div
-                className={classnames("filter-input input-group", {
-                    "has-error": !this.isValid(value),
+                className={classnames("relative flex items-center my-1", {
+                    "ring-2 ring-red-500": !this.isValid(value),
                 })}
             >
-                <span className="input-group-addon">
-                    <i className={"fa fa-fw fa-" + icon} style={{ color }} />
+                <span className="flex items-center justify-center px-2 bg-muted border border-r-0 border-input rounded-l h-8">
+                    <IconComponent className="h-4 w-4" style={{ color }} />
                 </span>
                 <input
                     type="text"
                     ref={this.inputRef}
                     placeholder={placeholder}
-                    className="form-control"
+                    className="h-8 px-2 py-1 text-sm bg-background border border-input rounded-r focus:outline-none focus:ring-1 focus:ring-ring min-w-[120px]"
                     value={value}
                     onChange={this.onChange}
                     onFocus={this.onFocus}
@@ -154,12 +162,11 @@ export default class FilterInput extends Component<
                 />
                 {(focus || mousefocus) && (
                     <div
-                        className="popover bottom"
+                        className="absolute top-full left-0 mt-1 z-50 w-64 p-3 bg-popover border border-border rounded-md shadow-md"
                         onMouseEnter={this.onMouseEnter}
                         onMouseLeave={this.onMouseLeave}
                     >
-                        <div className="arrow" />
-                        <div className="popover-content">{this.getDesc()}</div>
+                        <div className="text-sm text-popover-foreground">{this.getDesc()}</div>
                     </div>
                 )}
             </div>

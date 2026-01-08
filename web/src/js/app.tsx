@@ -1,3 +1,4 @@
+import "@/styles/globals.css";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
@@ -8,6 +9,7 @@ import useUrlState from "./urlState";
 import WebSocketBackend from "./backends/websocket";
 import StaticBackend from "./backends/static";
 import { store } from "./ducks";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Extend the Window interface to avoid TS errors
 declare global {
@@ -28,7 +30,11 @@ useUrlState(store);
 
 // Initialize theme on startup
 const currentTheme = store.getState().ui.theme.current;
-document.body.classList.add(`theme-${currentTheme}`);
+if (currentTheme === "dark") {
+    document.documentElement.classList.add("dark");
+} else {
+    document.documentElement.classList.remove("dark");
+}
 
 window.addEventListener("error", (e: ErrorEvent) => {
     store.dispatch(addLog(`${e.message}\n${e.error.stack}`));
@@ -39,7 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const root = createRoot(container!);
     root.render(
         <Provider store={store}>
-            <ProxyApp />
+            <TooltipProvider>
+                <ProxyApp />
+            </TooltipProvider>
         </Provider>,
     );
 });
+
+// Export React for window access
+window.React = React;

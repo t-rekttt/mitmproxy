@@ -13,6 +13,7 @@ import { ModeToggle } from "./ModeToggle";
 import { ServerStatus } from "./CaptureSetup";
 import ValueEditor from "../editors/ValueEditor";
 import { Popover } from "./Popover";
+import { Label } from "@/components/ui/label";
 
 export default function Transparent() {
     const serverState = useAppSelector((state) => state.modes.transparent);
@@ -29,13 +30,13 @@ export default function Transparent() {
     });
 
     return (
-        <div>
-            <h4 className="mode-title">Transparent Proxy</h4>
-            <p className="mode-description">
+        <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Transparent Proxy</h4>
+            <p className="text-xs text-muted-foreground">
                 You{" "}
                 <a
                     href="https://docs.mitmproxy.org/stable/howto-transparent/"
-                    style={{ textDecoration: "underline", color: "inherit" }}
+                    className="underline hover:text-foreground"
                 >
                     configure your routing table
                 </a>{" "}
@@ -67,35 +68,40 @@ function TransparentRow({
                     dispatch(setActive({ server, value: !server.active }))
                 }
             >
-                <Popover iconClass="fa fa-cog">
-                    <h4>Advanced Configuration</h4>
-                    <p>Listen Host</p>
-                    <ValueEditor
-                        className="mode-input"
-                        content={server.listen_host || ""}
-                        onEditDone={(host) =>
-                            dispatch(setListenHost({ server, value: host }))
-                        }
-                    />
-
-                    <p>Listen Port</p>
-                    <ValueEditor
-                        className="mode-input"
-                        content={
-                            server.listen_port
-                                ? server.listen_port.toString()
-                                : ""
-                        }
-                        placeholder="8080"
-                        onEditDone={(port) =>
-                            dispatch(
-                                setListenPort({
-                                    server,
-                                    value: parseInt(port),
-                                }),
-                            )
-                        }
-                    />
+                <Popover>
+                    <h4 className="font-semibold mb-3">Advanced Configuration</h4>
+                    <div className="space-y-3">
+                        <div>
+                            <Label className="text-xs">Listen Host</Label>
+                            <ValueEditor
+                                className="mt-1 w-full px-2 py-1 text-sm bg-background border border-input rounded"
+                                content={server.listen_host || ""}
+                                onEditDone={(host) =>
+                                    dispatch(setListenHost({ server, value: host }))
+                                }
+                            />
+                        </div>
+                        <div>
+                            <Label className="text-xs">Listen Port</Label>
+                            <ValueEditor
+                                className="mt-1 w-full px-2 py-1 text-sm bg-background border border-input rounded"
+                                content={
+                                    server.listen_port
+                                        ? server.listen_port.toString()
+                                        : ""
+                                }
+                                placeholder="8080"
+                                onEditDone={(port) =>
+                                    dispatch(
+                                        setListenPort({
+                                            server,
+                                            value: parseInt(port),
+                                        }),
+                                    )
+                                }
+                            />
+                        </div>
+                    </div>
                 </Popover>
             </ModeToggle>
             <ServerStatus error={error} backendState={backendState} />

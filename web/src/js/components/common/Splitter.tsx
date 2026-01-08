@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import classnames from "classnames";
+import { cn } from "@/lib/utils";
 
 type SplitterState = {
     applied: boolean;
@@ -99,15 +99,23 @@ export default class Splitter extends Component<SplitterProps, SplitterState> {
     }
 
     render() {
+        const isHorizontal = this.props.axis === "x";
+
         return (
             <div
                 ref={this.node}
-                className={classnames(
-                    "splitter",
-                    this.props.axis === "x" ? "splitter-x" : "splitter-y",
+                className={cn(
+                    "flex-shrink-0 relative z-10",
+                    isHorizontal ? "w-1 h-full" : "w-full h-1",
                 )}
             >
                 <div
+                    className={cn(
+                        "absolute bg-border hover:bg-primary/50 transition-colors",
+                        isHorizontal
+                            ? "w-1 h-full cursor-col-resize left-0"
+                            : "w-full h-1 cursor-row-resize top-0",
+                    )}
                     onLostPointerCapture={this.onLostPointerCapture}
                     onPointerDown={this.onPointerDown}
                     onPointerMove={this.onPointerMove}

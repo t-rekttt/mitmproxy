@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ValueEditor from "./ValueEditor";
 import { isEqual } from "lodash";
 import classnames from "classnames";
+import { PlusSquare } from "lucide-react";
 
 type Item = [key: string, value: string];
 
@@ -24,13 +25,13 @@ class Row extends Component<RowProps> {
         return (
             <div
                 ref={this.container}
-                className="kv-row"
+                className="flex items-baseline gap-1 py-0.5 hover:bg-muted/50 rounded"
                 onClick={this.onClick}
                 onKeyDownCapture={this.onKeyDown}
             >
                 <ValueEditor
                     ref={this.nameInput}
-                    className="kv-key"
+                    className="font-medium text-primary min-w-[100px]"
                     content={key}
                     onEditStart={this.props.onEditStart}
                     onEditDone={(newKey) =>
@@ -41,7 +42,7 @@ class Row extends Component<RowProps> {
                 :&nbsp;
                 <ValueEditor
                     ref={this.valueInput}
-                    className="kv-value"
+                    className="flex-1 text-muted-foreground"
                     content={value}
                     onEditStart={this.props.onEditStart}
                     onEditDone={(newVal) =>
@@ -122,7 +123,7 @@ export default class KeyValueListEditor extends Component<
 
         return (
             <div
-                className={classnames("kv-editor", this.props.className)}
+                className={classnames("space-y-0.5", this.props.className)}
                 onMouseDown={this.onMouseDown}
             >
                 {rows}
@@ -133,10 +134,13 @@ export default class KeyValueListEditor extends Component<
                             this.state.currentList.length - 1,
                         );
                     }}
-                    className="kv-add-row fa fa-plus-square-o"
+                    className="flex items-center gap-1 py-1 text-muted-foreground hover:text-foreground cursor-pointer"
                     role="button"
                     aria-label="Add"
-                />
+                >
+                    <PlusSquare className="h-4 w-4" />
+                    <span className="text-sm">Add entry</span>
+                </div>
             </div>
         );
     };

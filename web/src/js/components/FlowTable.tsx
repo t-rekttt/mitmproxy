@@ -7,6 +7,7 @@ import FlowTableHead from "./FlowTable/FlowTableHead";
 import FlowRow from "./FlowTable/FlowRow";
 import type { Flow } from "../flow";
 import type { RootState } from "../ducks";
+import { cn } from "@/lib/utils";
 
 type FlowTableProps = {
     flowView: Flow[];
@@ -63,7 +64,19 @@ export class PureFlowTable extends React.Component<
         if (snapshot) {
             autoscroll.adjustScrollTop(this.viewport);
         }
-        this.onViewportUpdate();
+
+        // Only update viewport if props changed, not if state changed
+        // (state changes mean onViewportUpdate was already called)
+        const propsChanged =
+            prevProps.flowView !== this.props.flowView ||
+            prevProps.rowHeight !== this.props.rowHeight ||
+            prevProps.selectedIds !== this.props.selectedIds ||
+            prevProps.highlightedIds !== this.props.highlightedIds ||
+            prevProps.onlySelectedId !== this.props.onlySelectedId;
+
+        if (propsChanged) {
+            this.onViewportUpdate();
+        }
 
         const { onlySelectedId } = this.props;
 
@@ -128,14 +141,17 @@ export class PureFlowTable extends React.Component<
 
         return (
             <div
-                className="flow-table"
+                className={cn(
+                    "flex-1 overflow-auto relative",
+                    "bg-background",
+                )}
                 onScroll={this.onViewportUpdate}
                 ref={this.viewport}
             >
-                <table>
+                <table className="w-full text-sm border-collapse">
                     <thead
                         ref={this.head}
-                        style={{ transform: `translateY(${viewportTop}px)` }}
+                        className="sticky top-0 z-10 bg-table-header"
                     >
                         <FlowTableHead />
                     </thead>

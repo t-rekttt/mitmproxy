@@ -1,4 +1,5 @@
 import React from "react";
+import { ChevronsDown } from "lucide-react";
 
 type ContentRendererProps = {
     content: string;
@@ -21,12 +22,9 @@ const ContentRenderer = React.memo(function ContentRenderer({
                     <button
                         key="showmore"
                         onClick={showMore}
-                        className="btn btn-xs btn-info"
+                        className="inline-flex items-center px-2 py-1 text-xs font-medium rounded bg-primary text-primary-foreground hover:bg-primary/90"
                     >
-                        <i
-                            className="fa fa-angle-double-down"
-                            aria-hidden="true"
-                        />{" "}
+                        <ChevronsDown className="h-3 w-3 mr-1" aria-hidden="true" />
                         Show more
                     </button>
                 ) : (

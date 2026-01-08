@@ -5,6 +5,9 @@ import { LogLevel, toggleFilter, toggleVisibility } from "../ducks/eventLog";
 import ToggleButton from "./common/ToggleButton";
 import EventList from "./EventLog/EventList";
 import type { RootState } from "../ducks";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 type EventLogState = {
     height: number;
@@ -57,10 +60,22 @@ export class PureEventLog extends Component<EventLogProps, EventLogState> {
         const { filters, events, toggleFilter, close } = this.props;
 
         return (
-            <div className="eventlog" style={{ height }}>
-                <div onMouseDown={this.onDragStart}>
-                    Eventlog
-                    <div className="pull-right">
+            <div
+                className={cn(
+                    "flex flex-col border-t border-border bg-card",
+                    "flex-shrink-0 overflow-hidden",
+                )}
+                style={{ height }}
+            >
+                <div
+                    className={cn(
+                        "flex items-center justify-between px-2 py-1",
+                        "border-b border-border bg-muted cursor-ns-resize",
+                    )}
+                    onMouseDown={this.onDragStart}
+                >
+                    <span className="text-sm font-medium">Event Log</span>
+                    <div className="flex items-center gap-2">
                         {Object.values(LogLevel).map((type) => (
                             <ToggleButton
                                 key={type}
@@ -69,7 +84,14 @@ export class PureEventLog extends Component<EventLogProps, EventLogState> {
                                 onToggle={() => toggleFilter(type)}
                             />
                         ))}
-                        <i onClick={close} className="fa fa-close"></i>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                            onClick={close}
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
                     </div>
                 </div>
                 <EventList events={events} />

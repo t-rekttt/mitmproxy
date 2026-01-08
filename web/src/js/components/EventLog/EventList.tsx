@@ -4,6 +4,8 @@ import type { VScroll } from "../helpers/VirtualScroll";
 import { calcVScroll } from "../helpers/VirtualScroll";
 import type { EventLogItem } from "../../ducks/eventLog";
 import { shallowEqual } from "react-redux";
+import { cn } from "@/lib/utils";
+import { Bug, AlertTriangle, Ban, Info, Globe } from "lucide-react";
 
 type EventLogListProps = {
     events: EventLogItem[];
@@ -87,7 +89,15 @@ export default class EventLogList extends Component<
         const { events } = this.props;
 
         return (
-            <pre ref={this.viewport} onScroll={this.onViewportUpdate}>
+            <pre
+                ref={this.viewport}
+                onScroll={this.onViewportUpdate}
+                className={cn(
+                    "flex-1 overflow-auto m-0 p-2",
+                    "font-mono text-xs leading-relaxed",
+                    "bg-background",
+                )}
+            >
                 <div style={{ height: vScroll.paddingTop }} />
                 {events.slice(vScroll.start, vScroll.end).map((event) => (
                     <div
@@ -95,9 +105,12 @@ export default class EventLogList extends Component<
                         ref={(node) => {
                             this.setHeight(event.id, node);
                         }}
+                        className="flex items-start gap-2 py-0.5"
                     >
                         <LogIcon event={event} />
-                        {event.message}
+                        <span className="whitespace-pre-wrap break-all">
+                            {event.message}
+                        </span>
                     </div>
                 ))}
                 <div style={{ height: vScroll.paddingBottom }} />
@@ -107,12 +120,18 @@ export default class EventLogList extends Component<
 }
 
 function LogIcon({ event }: { event: EventLogItem }) {
-    const icon =
-        {
-            web: "html5",
-            debug: "bug",
-            warn: "exclamation-triangle",
-            error: "ban",
-        }[event.level] || "info";
-    return <i className={`fa fa-fw fa-${icon}`} />;
+    const iconClass = "h-3 w-3 flex-shrink-0 mt-0.5";
+
+    switch (event.level) {
+        case "web":
+            return <Globe className={cn(iconClass, "text-info")} />;
+        case "debug":
+            return <Bug className={cn(iconClass, "text-muted-foreground")} />;
+        case "warn":
+            return <AlertTriangle className={cn(iconClass, "text-warning")} />;
+        case "error":
+            return <Ban className={cn(iconClass, "text-destructive")} />;
+        default:
+            return <Info className={cn(iconClass, "text-info")} />;
+    }
 }

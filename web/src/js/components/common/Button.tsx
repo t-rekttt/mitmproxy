@@ -1,10 +1,12 @@
 import * as React from "react";
-import classnames from "classnames";
+import { Button as ShadcnButton } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { LucideIcon } from "lucide-react";
 
 export interface ButtonProps {
     onClick: () => void;
     children?: React.ReactNode;
-    icon?: string;
+    icon?: LucideIcon;
     disabled?: boolean;
     className?: string;
     title?: string;
@@ -13,25 +15,22 @@ export interface ButtonProps {
 export default function Button({
     onClick,
     children,
-    icon,
+    icon: Icon,
     disabled,
     className,
     title,
 }: ButtonProps) {
     return (
-        <button
-            className={classnames(className, "btn btn-default")}
+        <ShadcnButton
+            variant="outline"
+            size="sm"
+            className={cn(className)}
             onClick={disabled ? undefined : onClick}
             disabled={disabled}
             title={title}
         >
-            {icon && (
-                <>
-                    <i className={"fa " + icon} />
-                    &nbsp;
-                </>
-            )}
+            {Icon && <Icon className="h-4 w-4 mr-1" />}
             {children}
-        </button>
+        </ShadcnButton>
     );
 }

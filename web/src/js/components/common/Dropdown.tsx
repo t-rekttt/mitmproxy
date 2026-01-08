@@ -1,28 +1,26 @@
-import React, { useEffect, useState } from "react";
-import type { UseFloatingOptions } from "@floating-ui/react-dom";
-import { useFloating } from "@floating-ui/react-dom";
-import classnames from "classnames";
+import React, { useState } from "react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
 
-export const Divider = () => <li role="separator" className="divider" />;
+export const Divider = () => <DropdownMenuSeparator />;
 
 type MenuItemProps = {
     onClick: () => void;
     children: React.ReactNode;
 };
 
-export function MenuItem({ onClick, children, ...attrs }: MenuItemProps) {
-    const click = (e) => {
-        e.preventDefault();
-        onClick();
-    };
-
-    return (
-        <li>
-            <a href="#" onClick={click} {...attrs}>
-                {children}
-            </a>
-        </li>
-    );
+export function MenuItem({ onClick, children }: MenuItemProps) {
+    return <DropdownMenuItem onClick={onClick}>{children}</DropdownMenuItem>;
 }
 
 type SubMenuProps = {
@@ -31,120 +29,44 @@ type SubMenuProps = {
     className?: string;
 };
 
-export function SubMenu({ title, children, className }: SubMenuProps) {
-    const [open, setOpen] = useState(false);
-    const { refs, floatingStyles } = useFloating({
-        placement: "right-start",
-    });
-    let submenu: React.ReactNode | null = null;
-    if (open) {
-        submenu = (
-            <ul
-                className={classnames("dropdown-menu show", className)}
-                ref={refs.setFloating}
-                style={floatingStyles}
-            >
-                {children}
-            </ul>
-        );
-    }
-
+export function SubMenu({ title, children }: SubMenuProps) {
     return (
-        <li
-            ref={refs.setReference}
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-        >
-            <a>
-                <i
-                    className="fa fa-caret-right pull-right"
-                    aria-hidden="true"
-                />{" "}
-                {title}
-            </a>
-            {submenu}
-        </li>
+        <DropdownMenuSub>
+            <DropdownMenuSubTrigger>{title}</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>{children}</DropdownMenuSubContent>
+        </DropdownMenuSub>
     );
 }
 
 type DropdownProps = {
     text: React.ReactNode;
     children: React.ReactNode;
-    options?: UseFloatingOptions;
+    options?: { placement?: string };
     className?: string;
     onOpen?: (b: boolean) => void;
 };
-/*
- * When modifying this component, check that File -> Open and flow content upload work.
- */
+
 export default React.memo(function Dropdown({
     text,
     children,
-    options,
-    className,
     onOpen,
-    ...attrs
 }: DropdownProps) {
-    const [open, _setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
-    const { refs, floatingStyles } = useFloating(options);
-
-    const setOpen = (b: boolean) => {
-        _setOpen(b);
-        if (onOpen) onOpen(b);
+    const handleOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+        if (onOpen) onOpen(isOpen);
     };
 
-    useEffect(() => {
-        if (!refs.floating.current) return;
-        document.addEventListener(
-            "click",
-            (e) => {
-                if (!refs.floating.current?.contains(e.target as Node)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setOpen(false);
-                } else {
-                    // We only want to call setOpen on the way out. This ensures the dropdown stays in DOM when clicked,
-                    // which we need for file upload from Dropdowns.
-                    document.addEventListener("click", () => setOpen(false), {
-                        once: true,
-                    });
-                }
-            },
-            { once: true, capture: true },
-        );
-    }, [refs.floating.current]);
-
-    let contents;
-    if (open) {
-        contents = (
-            <ul
-                className="dropdown-menu show"
-                ref={refs.setFloating}
-                style={floatingStyles}
-            >
-                {children}
-            </ul>
-        );
-    } else {
-        contents = null;
-    }
-
     return (
-        <>
-            <a
-                href="#"
-                ref={refs.setReference}
-                className={classnames(className, { open: open })}
-                onClick={(e) => {
-                    e.preventDefault();
-                    setOpen(true);
-                }}
-                {...attrs}
-            >
-                {text}
-            </a>
-            {contents}
-        </>
+        <DropdownMenu open={open} onOpenChange={handleOpenChange}>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1 h-8">
+                    {text}
+                    <ChevronDown className="h-3 w-3" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">{children}</DropdownMenuContent>
+        </DropdownMenu>
     );
 });

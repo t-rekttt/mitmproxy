@@ -1,6 +1,7 @@
 import * as React from "react";
 import Button from "../../../components/common/Button";
 import { render } from "../../test-utils";
+import { Play } from "lucide-react";
 
 describe("Button Component", () => {
     it("should render correctly", () => {
@@ -9,7 +10,7 @@ describe("Button Component", () => {
                 className="classname"
                 onClick={() => "onclick"}
                 title="title"
-                icon="icon"
+                icon={Play}
             >
                 <a>foo</a>
             </Button>,
